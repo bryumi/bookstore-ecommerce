@@ -1,12 +1,12 @@
-import type { Metadata } from 'next';
-import './globals.css';
-import { StoreProvider } from '@/lib/store-context';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import type { Metadata } from "next";
+import "./globals.css";
+import { StoreProvider } from "@/lib/store-context";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: 'Livraria Elegante - Sua Biblioteca Pessoal',
-  description: 'Encontre os melhores livros para sua coleção',
+  title: "Booklovers - Sua Biblioteca Pessoal",
+  description: "Encontre os melhores livros para sua coleção",
 };
 
 export default function RootLayout({
@@ -20,9 +20,7 @@ export default function RootLayout({
         <StoreProvider>
           <div className="flex flex-col min-h-screen">
             <Header />
-            <main className="flex-grow">
-              {children}
-            </main>
+            <main className="flex-grow">{children}</main>
             <Footer />
           </div>
         </StoreProvider>

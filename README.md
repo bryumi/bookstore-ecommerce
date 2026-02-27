@@ -1,4 +1,4 @@
-# 📚 Livraria Elegante - E-commerce de Livros
+# 📚 Livraria booklovers - E-commerce de Livros
 
 Um e-commerce moderno e elegante de livros desenvolvido com Next.js 14, React 18 e Tailwind CSS.
 
@@ -15,6 +15,7 @@ Um e-commerce moderno e elegante de livros desenvolvido com Next.js 14, React 18
 ## 🎨 Design
 
 O projeto utiliza uma paleta de cores sofisticada:
+
 - **Cream** (#FAF7F0): Fundo principal
 - **Charcoal** (#2C2C2C): Texto principal
 - **Burgundy** (#6B2D3E): Cor primária/destaque
@@ -22,6 +23,7 @@ O projeto utiliza uma paleta de cores sofisticada:
 - **Sage** (#8B9D83): Status e confirmações
 
 Tipografia elegante:
+
 - **Crimson Pro**: Fonte display para títulos
 - **Lora**: Fonte body para leitura
 - **Work Sans**: Fonte sans-serif para UI
@@ -36,16 +38,19 @@ Tipografia elegante:
 ### Instalação
 
 1. Navegue até a pasta do projeto:
+
 ```bash
 cd bookstore-ecommerce
 ```
 
 2. Instale as dependências:
+
 ```bash
 npm install
 ```
 
 3. Execute o servidor de desenvolvimento:
+
 ```bash
 npm run dev
 ```
@@ -89,6 +94,7 @@ bookstore-ecommerce/
 ## 📦 Funcionalidades Principais
 
 ### Página Inicial (Catálogo)
+
 - Grid responsivo de livros
 - Busca em tempo real
 - Filtros por categoria
@@ -97,6 +103,7 @@ bookstore-ecommerce/
 - Botão "Adicionar ao Carrinho" com feedback visual
 
 ### Carrinho de Compras
+
 - Visualização de todos os itens
 - Controle de quantidade (+/-)
 - Remoção de itens
@@ -105,6 +112,7 @@ bookstore-ecommerce/
 - Botão de finalização
 
 ### Página de Pedidos
+
 - Histórico completo de pedidos
 - Status visual (Processando, Enviado, Entregue)
 - Timeline de acompanhamento
