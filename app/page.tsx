@@ -10,7 +10,7 @@ export default function HomePage() {
   const [selectedCategory, setSelectedCategory] = useState('Todos');
 
   const categories = useMemo(() => {
-    const cats = ['Todos', ...new Set(books.map(book => book.category))];
+    const cats = ['Todos', ...Array.from(new Set(books.map(book => book.category)))];
     return cats;
   }, [books]);
 

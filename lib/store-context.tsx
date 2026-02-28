@@ -1,5 +1,6 @@
 "use client";
 
+import { mockOrder } from "@/data/mockOrder";
 import { books } from "@/data/mockProducts";
 import { Book, UserData } from "@/types/mock.interface";
 import { emptyUser } from "@/utils/mask";
@@ -15,7 +16,7 @@ interface CartItem extends Book {
   quantity: number;
 }
 
-interface Order {
+export interface Order {
   id: string;
   date: string;
   items: CartItem[];
@@ -46,7 +47,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<Order[]>([mockOrder]);
   const [userData, setUserData] = useState<UserData>(emptyUser());
   const [loggedUser, setLoggedUser] = useState<UserData | null>(null);
   // Load cart and orders from localStorage
@@ -63,6 +64,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
     }
     if (savedOrders) {
       setOrders(JSON.parse(savedOrders));
+      console.log("Loaded orders from localStorage:", JSON.parse(savedOrders));
     }
   }, []);
 

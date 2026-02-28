@@ -7,6 +7,7 @@ import ProfileForm from "@/components/Forms/ProfileForm";
 import RegisterForm from "@/components/Forms/RegisterForm";
 import { useStore } from "@/lib/store-context";
 import { UserData } from "@/types/mock.interface";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 type FormMode = "choose" | "login" | "register" | "profile" | "checkout";
@@ -25,9 +26,9 @@ export default function CheckoutForm() {
   const [editSection, setEditSection] = useState<
     "personal" | "addresses" | "cards" | null
   >(null);
-
+  const router = useRouter();
   const stepIndex = steps.findIndex((s) => s.key === registerStep);
-  const { loggedUser, setLoggedUser } = useStore();
+  const { loggedUser, setLoggedUser, clearCart } = useStore();
   useEffect(() => {
     const stored = localStorage.getItem("bookstore-user");
     if (stored && stored !== "null") {
@@ -46,10 +47,6 @@ export default function CheckoutForm() {
     setLoggedUser(null);
     setMode("choose");
   };
-  useEffect(() => {
-    console.log("mode changed", mode);
-    console.log("loggedUser", loggedUser);
-  }, [mode, loggedUser]);
 
   // ── Choose ──────────────────────────────────────────────────────────────────
   if (mode === "choose")
@@ -149,7 +146,9 @@ export default function CheckoutForm() {
       <OrderSummary
         user={loggedUser}
         onConfirm={() => {
-          console.log("confirm purchase");
+          alert("Compra confirmada! Obrigado por comprar conosco.");
+          router.push("/orders");
+          clearCart();
         }}
       />
     );

@@ -51,13 +51,15 @@ export default function Header() {
               )}
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-burgundy group-hover:w-full transition-all duration-300"></span>
             </Link>
-            <Link
-              href="/orders"
-              className="font-sans font-medium text-charcoal hover:text-burgundy transition-colors relative group"
-            >
-              Pedidos
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-burgundy group-hover:w-full transition-all duration-300"></span>
-            </Link>
+            {loggedUser && (
+              <Link
+                href="/orders"
+                className="font-sans font-medium text-charcoal hover:text-burgundy transition-colors relative group"
+              >
+                Pedidos
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-burgundy group-hover:w-full transition-all duration-300"></span>
+              </Link>
+            )}
           </nav>
           {loggedUser && (
             <Link
