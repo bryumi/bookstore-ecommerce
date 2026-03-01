@@ -51,6 +51,7 @@ export default function Header() {
               )}
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-burgundy group-hover:w-full transition-all duration-300"></span>
             </Link>
+
             {loggedUser && (
               <Link
                 href="/orders"
@@ -82,6 +83,26 @@ export default function Header() {
                 <rect width="18" height="18" x="3" y="3" rx="2" />
               </svg>
             </Link>
+          )}
+
+          {!loggedUser && (
+            <div className="hidden md:flex items-center space-x-4">
+              <Link
+                href="/login"
+                className="font-sans font-medium text-charcoal hover:text-burgundy transition-colors relative group"
+              >
+                Login
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-burgundy group-hover:w-full transition-all duration-300"></span>
+              </Link>
+              <span>|</span>
+              <Link
+                href="/register"
+                className="font-sans font-medium text-charcoal hover:text-burgundy transition-colors relative group"
+              >
+                Cadastre-se
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-burgundy group-hover:w-full transition-all duration-300"></span>
+              </Link>
+            </div>
           )}
           {/* Cart Icon for Desktop */}
           <Link

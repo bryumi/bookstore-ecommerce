@@ -14,7 +14,7 @@ const SectionLabel = ({
 }) => (
   <div className="flex items-center gap-3 mb-4">
     <span className="text-gold/50 text-xs">✦</span>
-    <p className="font-sans text-[10px] uppercase tracking-[0.22em] font-semibold text-charcoal/50">
+    <p className="font-sans text-[20px] uppercase tracking-[0.22em] font-semibold text-charcoal/50">
       {children}
     </p>
     <div className="flex-1 h-px bg-charcoal/8" />
@@ -205,7 +205,7 @@ export default function OrderSummary({
         onClose={() => setCardModalOpen(false)}
         onAdd={handleAddCard}
       />
-      <div className="w-full space-y-6">
+      <div className="w-full space-y-6 px-11">
         {/* ── Order items ──────────────────────────────────────────────────────── */}
         <div className="bg-white border border-charcoal/8">
           <div className="px-6 pt-6 pb-2">
@@ -215,7 +215,7 @@ export default function OrderSummary({
           <div className="divide-y divide-charcoal/5">
             {cart.map((item) => (
               <div key={item.id} className="flex items-center gap-4 px-6 py-4">
-                <div className="w-10 h-14 overflow-hidden flex-shrink-0 shadow-sm">
+                <div className="w-20 h-20 overflow-hidden flex-shrink-0 shadow-sm">
                   <img
                     src={item.image}
                     alt={item.title}
@@ -223,17 +223,17 @@ export default function OrderSummary({
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-display text-sm font-semibold text-charcoal truncate">
+                  <p className="font-display text-xl font-semibold text-charcoal truncate">
                     {item.title}
                   </p>
-                  <p className="font-body text-xs italic text-charcoal/40 truncate">
+                  <p className="font-body text-xl italic text-charcoal/40 truncate">
                     {item.author}
                   </p>
-                  <p className="font-sans text-[10px] uppercase tracking-wider text-charcoal/30 mt-0.5">
+                  <p className="font-sans text-lg uppercase tracking-wider text-charcoal/30 mt-0.5">
                     Qtd. {item.quantity}
                   </p>
                 </div>
-                <p className="font-display text-base font-semibold text-charcoal flex-shrink-0">
+                <p className="font-display text-lg font-semibold text-charcoal flex-shrink-0">
                   {formatBRL(item.price * item.quantity)}
                 </p>
               </div>
@@ -242,11 +242,11 @@ export default function OrderSummary({
 
           {/* Totals */}
           <div className="px-6 pt-4 pb-6 space-y-2 border-t border-charcoal/5 mt-2">
-            <div className="flex justify-between font-body text-sm text-charcoal/50">
+            <div className="flex justify-between font-body text-lg text-charcoal/50">
               <span>Subtotal</span>
               <span>{formatBRL(total)}</span>
             </div>
-            <div className="flex justify-between font-body text-sm text-charcoal/50">
+            <div className="flex justify-between font-body text-lg text-charcoal/50">
               <span>Frete</span>
               <span className="text-sage font-medium">Grátis</span>
             </div>
@@ -256,7 +256,7 @@ export default function OrderSummary({
               <div className="flex-1 h-px bg-charcoal/8" />
             </div>
             <div className="flex justify-between items-baseline">
-              <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-charcoal/40">
+              <span className="font-sans text-lg uppercase tracking-[0.2em] text-charcoal/40">
                 Total
               </span>
               <span className="font-display text-2xl font-bold text-charcoal">
@@ -274,11 +274,23 @@ export default function OrderSummary({
                 <button
                   type="button"
                   onClick={() => setAddressModalOpen(true)}
-                  className="flex items-center gap-1.5 font-sans text-[10px] uppercase tracking-[0.15em] text-burgundy hover:text-burgundy/60 transition-colors whitespace-nowrap"
+                  className="flex items-center gap-1.5 font-sans text-lg uppercase tracking-[0.15em] text-burgundy hover:text-burgundy/60 transition-colors whitespace-nowrap"
                 >
-                  <span className="w-4 h-4 border border-current flex items-center justify-center leading-none text-sm">
-                    +
-                  </span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <rect width="18" height="18" x="3" y="3" rx="2" />
+                    <path d="M8 12h8" />
+                    <path d="M12 8v8" />
+                  </svg>
                   Novo
                 </button>
               }
@@ -287,7 +299,7 @@ export default function OrderSummary({
             </SectionLabel>
 
             {addressList.length === 0 ? (
-              <p className="font-body text-sm italic text-charcoal/40">
+              <p className="font-body text-lg italic text-charcoal/40">
                 Nenhum endereço cadastrado.
               </p>
             ) : (
@@ -336,25 +348,25 @@ export default function OrderSummary({
                       </div> */}
                         <div>
                           <div className="flex items-center gap-2 mb-1">
-                            <p className="font-sans text-sm font-semibold text-charcoal">
+                            <p className="font-sans text-lg font-semibold text-charcoal">
                               {addr.apelido || addr.tipo}
                             </p>
                             {addr.isCobranca && (
-                              <span className="font-sans text-[9px] uppercase tracking-wider text-burgundy bg-burgundy/8 px-1.5 py-0.5">
+                              <span className="font-sans text-base uppercase tracking-wider text-burgundy bg-burgundy/8 px-1.5 py-0.5">
                                 cobrança
                               </span>
                             )}
                             {addr.isEntrega && (
-                              <span className="font-sans text-[9px] uppercase tracking-wider text-sage bg-sage/10 px-1.5 py-0.5">
+                              <span className="font-sans text-base uppercase tracking-wider text-sage bg-sage/10 px-1.5 py-0.5">
                                 entrega
                               </span>
                             )}
                           </div>
-                          <p className="font-body text-xs text-charcoal/55 leading-relaxed">
+                          <p className="font-body text-lg text-charcoal/55 leading-relaxed">
                             {addr.rua}, {addr.numero}
                             {addr.complemento ? `, ${addr.complemento}` : ""}
                           </p>
-                          <p className="font-body text-xs text-charcoal/40">
+                          <p className="font-body text-base text-charcoal/40">
                             {addr.cidade} — {addr.estado}, {addr.pais} ·{" "}
                             {addr.cep}
                           </p>
@@ -376,11 +388,23 @@ export default function OrderSummary({
                 <button
                   type="button"
                   onClick={() => setCardModalOpen(true)}
-                  className="flex items-center gap-1.5 font-sans text-[10px] uppercase tracking-[0.15em] text-burgundy hover:text-burgundy/60 transition-colors whitespace-nowrap"
+                  className="flex items-center gap-1.5 font-sans text-lg uppercase tracking-[0.15em] text-burgundy hover:text-burgundy/60 transition-colors whitespace-nowrap"
                 >
-                  <span className="w-4 h-4 border border-current flex items-center justify-center leading-none text-sm">
-                    +
-                  </span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <rect width="18" height="18" x="3" y="3" rx="2" />
+                    <path d="M8 12h8" />
+                    <path d="M12 8v8" />
+                  </svg>
                   Novo
                 </button>
               }
@@ -390,7 +414,7 @@ export default function OrderSummary({
 
             {/* Available cards to add */}
             <div className="mb-4">
-              <p className="font-sans text-[10px] uppercase tracking-[0.15em] text-charcoal/35 mb-2">
+              <p className="font-sans text-base uppercase tracking-[0.15em] text-charcoal/35 mb-2">
                 Seus cartões
               </p>
               <div className="flex flex-wrap gap-2">
@@ -411,11 +435,11 @@ export default function OrderSummary({
                       }`}
                     >
                       <div className="flex flex-col">
-                        <span className="font-sans text-[10px] uppercase tracking-wider leading-tight">
+                        <span className="font-sans text-base uppercase tracking-wider leading-tight">
                           {card.apelido || maskCard(card.numero)}
                         </span>
                         <span
-                          className={`font-mono text-[10px] leading-tight ${alreadyAdded ? "text-cream/50" : "text-charcoal/35"}`}
+                          className={`font-mono text-base leading-tight ${alreadyAdded ? "text-cream/50" : "text-charcoal/35"}`}
                         >
                           {maskCard(card.numero)}
                         </span>
@@ -437,7 +461,7 @@ export default function OrderSummary({
                         </svg>
                       )}
                       {card.isPreferencial && !alreadyAdded && (
-                        <span className="font-sans text-[9px] text-gold uppercase tracking-wider">
+                        <span className="font-sans text-base text-gold uppercase tracking-wider">
                           ★
                         </span>
                       )}
@@ -451,7 +475,7 @@ export default function OrderSummary({
             {cardPayments.length > 0 && (
               <div className="mt-5 space-y-3">
                 <div className="flex items-center justify-between">
-                  <p className="font-sans text-[10px] uppercase tracking-[0.15em] text-charcoal/35">
+                  <p className="font-sans text-base uppercase tracking-[0.15em] text-charcoal/35">
                     Distribuição do pagamento
                   </p>
                   {cardPayments.length > 1 && (
@@ -481,17 +505,17 @@ export default function OrderSummary({
                         {/* Card info row */}
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <span className="font-sans text-xs font-semibold text-charcoal">
+                            <span className="font-sans text-base font-semibold text-charcoal">
                               {card.apelido || maskCard(card.numero)}
                             </span>
-                            <span className="font-mono text-[10px] text-charcoal/30">
+                            <span className="font-mono text-base text-charcoal/30">
                               {maskCard(card.numero)}
                             </span>
                           </div>
                           <button
                             type="button"
                             onClick={() => removeCard(payment.cardId)}
-                            className="text-charcoal/20 hover:text-burgundy transition-colors text-xs"
+                            className="text-charcoal/20 hover:text-burgundy transition-colors text-base"
                           >
                             <svg
                               className="w-3.5 h-3.5"
@@ -511,7 +535,7 @@ export default function OrderSummary({
 
                         {/* Value input */}
                         <div className="flex items-center gap-2">
-                          <span className="font-sans text-xs text-charcoal/40">
+                          <span className="font-sans text-base text-charcoal/40">
                             R$
                           </span>
                           <input
@@ -526,10 +550,10 @@ export default function OrderSummary({
                                 ? remaining.toFixed(2)
                                 : "0,00"
                             }
-                            className="flex-1 border border-charcoal/12 bg-cream px-2.5 py-1.5 font-mono text-sm text-charcoal placeholder:text-charcoal/20 focus:outline-none focus:border-burgundy transition-all"
+                            className="flex-1 border border-charcoal/12 bg-cream px-2.5 py-1.5 font-mono text-base text-charcoal placeholder:text-charcoal/20 focus:outline-none focus:border-burgundy transition-all"
                           />
                           {parsedVal > 0 && (
-                            <span className="font-sans text-[10px] text-charcoal/35 whitespace-nowrap">
+                            <span className="font-sans text-base text-charcoal/35 whitespace-nowrap">
                               {pct.toFixed(0)}%
                             </span>
                           )}
@@ -576,7 +600,7 @@ export default function OrderSummary({
                             d="M5 13l4 4L19 7"
                           />
                         </svg>
-                        <span className="font-sans text-[10px] uppercase tracking-[0.15em] text-sage">
+                        <span className="font-sans text-lg uppercase tracking-[0.15em] text-sage">
                           Valor distribuído corretamente
                         </span>
                       </>
@@ -595,7 +619,7 @@ export default function OrderSummary({
                             d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                           />
                         </svg>
-                        <span className="font-sans text-[10px] uppercase tracking-[0.15em] text-burgundy">
+                        <span className="font-sans text-lg uppercase tracking-[0.15em] text-burgundy">
                           Excede em {formatBRL(allocatedTotal - total)}
                         </span>
                       </>
@@ -614,14 +638,14 @@ export default function OrderSummary({
                             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                           />
                         </svg>
-                        <span className="font-sans text-[10px] uppercase tracking-[0.15em] text-charcoal/35">
+                        <span className="font-sans text-lg uppercase tracking-[0.15em] text-charcoal/35">
                           Faltam {formatBRL(remaining)}
                         </span>
                       </>
                     )}
                   </div>
                   <div className="text-right">
-                    <span className="font-sans text-[10px] text-charcoal/30 uppercase tracking-wider">
+                    <span className="font-sans text-base text-charcoal/30 uppercase tracking-wider">
                       {formatBRL(allocatedTotal)} / {formatBRL(total)}
                     </span>
                   </div>
@@ -630,7 +654,7 @@ export default function OrderSummary({
             )}
 
             {cardPayments.length === 0 && (
-              <p className="font-body text-sm italic text-charcoal/35 mt-2">
+              <p className="font-body text-xl italic text-charcoal/35 mt-2">
                 Selecione ao menos um cartão acima para pagar.
               </p>
             )}
@@ -653,7 +677,7 @@ export default function OrderSummary({
                 d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <p className="font-body text-sm text-burgundy">{error}</p>
+            <p className="font-body text-base text-burgundy">{error}</p>
           </div>
         )}
 
@@ -661,7 +685,7 @@ export default function OrderSummary({
         <button
           type="button"
           onClick={handleConfirm}
-          className="w-full bg-charcoal text-cream font-sans text-[11px] uppercase tracking-[0.2em] py-4 hover:bg-burgundy disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-300 flex items-center justify-center gap-3"
+          className="w-full bg-charcoal text-cream font-sans text-base uppercase tracking-[0.2em] py-4 hover:bg-burgundy disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-300 flex items-center justify-center gap-3"
         >
           <svg
             className="w-4 h-4"
@@ -679,7 +703,7 @@ export default function OrderSummary({
           Confirmar Pedido · {formatBRL(total)}
         </button>
 
-        <p className="text-center font-sans text-[10px] uppercase tracking-[0.15em] text-charcoal/20">
+        <p className="text-center font-sans text-base uppercase tracking-[0.15em] text-charcoal/20">
           🔒 Transação protegida com criptografia
         </p>
       </div>
