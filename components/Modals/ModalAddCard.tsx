@@ -90,11 +90,6 @@ const AddCardModal = ({
             <span className="font-sans text-[9px] uppercase tracking-[0.3em] text-cream/35">
               {form.apelido || "Novo Cartão"}
             </span>
-            {/* {brand !== "—" && (
-              <span className="font-sans text-[10px] uppercase tracking-widest text-cream/50">
-                {brand}
-              </span>
-            )} */}
           </div>
 
           <div className="relative">
@@ -169,7 +164,6 @@ const AddCardModal = ({
           onChange={(v) => set("isPreferencial", v)}
         />
 
-        {/* Actions */}
         <div className="flex gap-3 pt-2 border-t border-charcoal/6 mt-2">
           <button
             type="button"

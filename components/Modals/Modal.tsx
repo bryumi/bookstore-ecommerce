@@ -13,7 +13,7 @@ const Modal = ({
   subtitle?: string;
   children: React.ReactNode;
 }) => {
-  // Close on Escape
+
   useEffect(() => {
     if (!open) return;
     const handler = (e: KeyboardEvent) => {
@@ -23,7 +23,7 @@ const Modal = ({
     return () => window.removeEventListener("keydown", handler);
   }, [open, onClose]);
 
-  // Lock body scroll
+
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => {
@@ -42,7 +42,7 @@ const Modal = ({
         style={{ animation: "fadeIn 0.2s ease" }}
       />
 
-      {/* Panel */}
+
       <div
         className="relative w-full sm:max-w-lg bg-cream border-t sm:border border-charcoal/12 shadow-2xl
           max-h-[92dvh] flex flex-col"
@@ -53,7 +53,6 @@ const Modal = ({
           <div className="w-8 h-1 bg-charcoal/15 rounded-full" />
         </div>
 
-        {/* Header */}
         <div className="flex items-start justify-between px-6 pt-5 pb-4 border-b border-charcoal/8 flex-shrink-0">
           <div>
             <p className="font-sans text-[10px] uppercase tracking-[0.28em] text-gold mb-0.5">
@@ -89,7 +88,6 @@ const Modal = ({
           </button>
         </div>
 
-        {/* Scrollable body */}
         <div className="overflow-y-auto flex-1 px-6 py-5">{children}</div>
       </div>
 

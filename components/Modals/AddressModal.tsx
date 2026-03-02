@@ -228,7 +228,6 @@ function AddAddressModal({
           />
         </div>
 
-        {/* Actions */}
         <div className="flex gap-3 pt-2 border-t border-charcoal/6 mt-2">
           <button
             type="button"
