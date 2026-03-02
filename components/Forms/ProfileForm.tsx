@@ -35,7 +35,7 @@ const ProfileForm = ({
 }) => {
   const router = useRouter();
   const { clearCart } = useStore();
-  // Each section has its own independent form
+
   const personalMethods = useForm<UserData>({
     resolver: yupResolver(profilePersonalSchema as any),
     defaultValues: loggedUser,

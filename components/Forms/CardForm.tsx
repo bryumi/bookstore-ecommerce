@@ -52,7 +52,6 @@ const CardForm = ({
         )}
       </div>
 
-      {/* Card preview */}
       <div className="relative h-32 bg-charcoal overflow-hidden p-5 flex flex-col justify-between">
         <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full bg-burgundy/15" />
         <div className="absolute -bottom-6 right-8 w-24 h-24 rounded-full bg-gold/8" />

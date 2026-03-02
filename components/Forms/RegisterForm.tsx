@@ -45,7 +45,7 @@ const RegisterForm = ({
   const methods = useForm<UserData>({
     resolver: yupResolver(registerSchema),
     defaultValues: emptyUser(),
-    // Validate only on submit/blur, not on every keystroke
+
     mode: "onTouched",
   } as any);
 
@@ -56,7 +56,6 @@ const RegisterForm = ({
     formState: { isSubmitting },
   } = methods;
 
-  // Advance to next step after validating only current step's fields
   const handleNext = async () => {
     const fields = stepValidationFields[registerStep];
     const valid = await trigger(fields as any);
@@ -84,7 +83,6 @@ const RegisterForm = ({
             </h2>
           </div>
 
-          {/* Step indicator */}
           <div className="flex items-center gap-1.5 mt-1">
             {steps.map((s, i) => (
               <div key={s.key} className="flex items-center gap-1.5">
@@ -104,7 +102,6 @@ const RegisterForm = ({
           </div>
         </div>
 
-        {/* Single form wraps all steps — FormProvider shares context to sub-components */}
         <FormProvider {...methods}>
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
             <div className="bg-white border border-charcoal/8 p-8 space-y-6">

@@ -95,7 +95,6 @@ export default function OrdersPage() {
               className="bg-white rounded-lg shadow-md overflow-hidden animate-slide-in"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              {/* Order Header */}
               <div className="bg-gradient-to-r from-burgundy to-burgundy/80 text-cream p-6">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div>
@@ -119,7 +118,6 @@ export default function OrdersPage() {
                 </div>
               </div>
 
-              {/* Order Items */}
               <div className="p-6">
                 <div className="space-y-4 mb-6">
                   {order.items.map((item) => (
@@ -152,7 +150,6 @@ export default function OrdersPage() {
                   ))}
                 </div>
 
-                {/* Order Total */}
                 <div className="border-t border-charcoal/10 pt-4">
                   <div className="flex justify-between items-center">
                     <span className="font-display text-xl font-semibold text-charcoal">
@@ -164,7 +161,6 @@ export default function OrdersPage() {
                   </div>
                 </div>
 
-                {/* Order Status Timeline */}
                 <div className="mt-6 pt-6 border-t border-charcoal/10">
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col items-center">
@@ -250,7 +246,6 @@ export default function OrdersPage() {
           ))}
         </div>
 
-        {/* Continue Shopping */}
         <div className="mt-8 text-center">
           <Link href="/" className="btn-secondary inline-block">
             Continuar Comprando
