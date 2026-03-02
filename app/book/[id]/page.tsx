@@ -20,7 +20,7 @@ export default function BookDetailPage() {
     .filter((b) => b.category === book?.category && b.id !== book?.id)
     .slice(0, 3);
 
-  // Staggered entrance
+
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 60);
     return () => clearTimeout(t);
@@ -63,10 +63,8 @@ export default function BookDetailPage() {
 
   return (
     <div className="min-h-screen bg-cream">
-      {/* Top decorative rule */}
       <div className="h-px bg-gradient-to-r from-transparent via-gold/35 to-transparent" />
 
-      {/* ── Breadcrumb ─────────────────────────────────────────────────────── */}
       <nav className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
         <div className="flex items-center gap-2 font-sans text-[10px] uppercase tracking-[0.18em] text-charcoal/35">
           <Link href="/" className="hover:text-charcoal transition-colors">
@@ -81,7 +79,6 @@ export default function BookDetailPage() {
         </div>
       </nav>
 
-      {/* ── Hero ───────────────────────────────────────────────────────────── */}
       <section
         ref={heroRef}
         className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16"
@@ -96,13 +93,12 @@ export default function BookDetailPage() {
               transition: "opacity 0.6s ease, transform 0.6s ease",
             }}
           >
-            {/* Book cover with shadow stack */}
             <div className="relative mx-auto max-w-[280px] lg:max-w-none">
               {/* Shadow pages behind */}
               <div className="absolute inset-0 translate-x-2 translate-y-2 bg-charcoal/10" />
               <div className="absolute inset-0 translate-x-1 translate-y-1 bg-charcoal/6" />
 
-              {/* Main cover */}
+
               <div className="relative overflow-hidden shadow-2xl">
                 <div
                   className={`bg-charcoal/8 transition-opacity duration-500 ${imageLoaded ? "opacity-0" : "opacity-100"} absolute inset-0`}
@@ -113,17 +109,15 @@ export default function BookDetailPage() {
                   className="w-full aspect-[2/3] object-cover"
                   onLoad={() => setImageLoaded(true)}
                 />
-                {/* Spine effect */}
                 <div className="absolute inset-y-0 left-0 w-3 bg-gradient-to-r from-charcoal/20 to-transparent pointer-events-none" />
               </div>
 
-              {/* Category badge */}
+
               <div className="absolute -top-3 -right-3 bg-burgundy text-cream font-sans text-[9px] uppercase tracking-[0.2em] px-3 py-1.5">
                 {book.category}
               </div>
             </div>
 
-            {/* Rating under cover */}
             <div className="flex items-center justify-center gap-2 mt-6">
               <div className="flex items-center gap-0.5">
                 {stars.map((s, i) => (
@@ -145,7 +139,6 @@ export default function BookDetailPage() {
             </div>
           </div>
 
-          {/* Info column */}
           <div
             className="lg:col-span-8 xl:col-span-9"
             style={{
@@ -154,17 +147,16 @@ export default function BookDetailPage() {
               transition: "opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s",
             }}
           >
-            {/* Meta */}
+
             <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-gold mb-3">
               {book.category}
             </p>
 
-            {/* Title */}
             <h1 className="font-display text-4xl sm:text-5xl text-charcoal font-semibold leading-[1.1] mb-3">
               {book.title}
             </h1>
 
-            {/* Author */}
+
             <p className="font-body text-lg italic text-charcoal/50 mb-6">
               por{" "}
               <span className="text-charcoal/70 font-semibold not-italic">
@@ -172,19 +164,18 @@ export default function BookDetailPage() {
               </span>
             </p>
 
-            {/* Decorative divider */}
             <div className="flex items-center gap-4 mb-8">
               <div className="h-px flex-1 bg-charcoal/8" />
               <span className="text-gold/40 text-xs">✦</span>
               <div className="h-px flex-1 bg-charcoal/8" />
             </div>
 
-            {/* Description */}
+
             <p className="font-body text-base text-charcoal/65 leading-relaxed mb-8 max-w-2xl">
               {book.description}
             </p>
 
-            {/* Details grid */}
+
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10">
               {[
                 { label: "Categoria", value: book.category },
@@ -202,7 +193,7 @@ export default function BookDetailPage() {
               ))}
             </div>
 
-            {/* Price + CTA */}
+
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <div>
                 <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-charcoal/35 mb-1">
@@ -289,7 +280,6 @@ export default function BookDetailPage() {
               </div>
             </div>
 
-            {/* Free shipping note */}
             <div className="flex items-center gap-2.5 mt-6 pt-6 border-t border-charcoal/8">
               <svg
                 className="w-4 h-4 text-sage flex-shrink-0"
@@ -312,7 +302,6 @@ export default function BookDetailPage() {
         </div>
       </section>
 
-      {/* ── Decorative pull quote ───────────────────────────────────────────── */}
       <section
         className="border-y border-charcoal/8 bg-charcoal/2 py-10 my-4"
         style={{
@@ -336,8 +325,6 @@ export default function BookDetailPage() {
           </div>
         </div>
       </section>
-
-      {/* ── Related books ──────────────────────────────────────────────────── */}
       {related.length > 0 && (
         <section
           className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14"
@@ -372,7 +359,6 @@ export default function BookDetailPage() {
                   transition: `opacity 0.6s ease ${0.6 + i * 0.1}s, transform 0.6s ease ${0.6 + i * 0.1}s, box-shadow 0.2s ease, border-color 0.2s ease`,
                 }}
               >
-                {/* Mini cover */}
                 <div className="w-16 flex-shrink-0 overflow-hidden shadow-sm relative">
                   <img
                     src={rel.image}
@@ -382,7 +368,6 @@ export default function BookDetailPage() {
                   <div className="absolute inset-y-0 left-0 w-1.5 bg-gradient-to-r from-charcoal/15 to-transparent pointer-events-none" />
                 </div>
 
-                {/* Info */}
                 <div className="flex-1 min-w-0 py-0.5">
                   <p className="font-sans text-[9px] uppercase tracking-[0.2em] text-gold mb-1">
                     {rel.category}
@@ -403,7 +388,6 @@ export default function BookDetailPage() {
         </section>
       )}
 
-      {/* ── Back to catalog ─────────────────────────────────────────────────── */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
         <div className="flex items-center gap-4">
           <div className="flex-1 h-px bg-charcoal/8" />

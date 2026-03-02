@@ -48,7 +48,6 @@ export default function CheckoutForm() {
     setMode("choose");
   };
 
-  // ── Choose ──────────────────────────────────────────────────────────────────
   if (mode === "choose")
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center p-6">
@@ -94,7 +93,6 @@ export default function CheckoutForm() {
       </div>
     );
 
-  // ── Login ───────────────────────────────────────────────────────────────────
   if (mode === "login")
     return (
       <LoginForm
@@ -107,7 +105,6 @@ export default function CheckoutForm() {
       />
     );
 
-  // ── Register ────────────────────────────────────────────────────────────────
   if (mode === "register")
     return (
       <RegisterForm
@@ -126,7 +123,6 @@ export default function CheckoutForm() {
       />
     );
 
-  // ── Profile ─────────────────────────────────────────────────────────────────
   if (mode === "profile" && loggedUser)
     return (
       <ProfileForm
