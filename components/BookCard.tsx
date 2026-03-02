@@ -35,7 +35,6 @@ export default function BookCard({ book }: BookCardProps) {
   return (
     <Link href={`/book/${book.id}`} className="block group">
       <div className="group bg-white rounded-lg shadow-md overflow-hidden card-hover border border-charcoal/5">
-        {/* Book Cover */}
         <div className="relative h-80 overflow-hidden bg-charcoal/5">
           <img
             src={book.image}
@@ -43,12 +42,12 @@ export default function BookCard({ book }: BookCardProps) {
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
           />
 
-          {/* Category Badge */}
+
           <div className="absolute top-3 right-3 bg-burgundy/90 backdrop-blur-sm text-cream px-3 py-1 rounded-full text-xs font-sans font-medium">
             {book.category}
           </div>
 
-          {/* Rating */}
+
           <div className="absolute bottom-3 left-3 flex items-center space-x-1 bg-cream/90 backdrop-blur-sm px-2 py-1 rounded-full">
             <svg className="w-4 h-4 text-gold fill-current" viewBox="0 0 20 20">
               <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
@@ -59,7 +58,7 @@ export default function BookCard({ book }: BookCardProps) {
           </div>
         </div>
 
-        {/* Book Info */}
+
         <div className="p-5">
           <h3 className="font-display font-semibold text-lg text-charcoal mb-1 line-clamp-2 group-hover:text-burgundy transition-colors">
             {book.title}

@@ -17,10 +17,10 @@ const Input = ({
   placeholder?: string;
   required?: boolean;
   hint?: string;
-  /** Optional formatter applied onChange before storing (e.g. CPF mask) */
+
   transform?: (v: string) => string;
 }) => {
-  // Wrap onChange to apply transform if provided
+
   const wrappedRegistration = transform
     ? {
         ...registration,
