@@ -35,7 +35,7 @@ const LoginForm = ({
   };
 
   return (
-    <div className="min-h-screen bg-cream flex items-center justify-center p-6">
+    <div className="min-h-screen bg-cream flex items-start justify-center p-6">
       <div className="w-1/2">
         <button
           onClick={onBack}
