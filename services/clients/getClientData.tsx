@@ -8,7 +8,7 @@ type IResponseGetClient = {
 };
 export const useGetClientData = (id: string) => {
   return useQuery({
-    queryKey: ["get-client-data"],
+    queryKey: ["get-client-data", id],
     queryFn: async () => {
       const { data } = await api.get<IResponseGetClient>(`clients/${id}`);
       return data;

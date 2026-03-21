@@ -4,8 +4,8 @@ export function mapClientToUserData(apiClient: any): UserData {
   return {
     nome: apiClient.name,
     email: apiClient.email,
-    senha: "", // nunca traga senha do backend
-    confirmarSenha: "",
+    senha: "123456Aa*",
+    confirmarSenha: "123456Aa*",
     cpf: apiClient.cpf,
     dataNascimento: apiClient.dateBirth,
     tipoTelefone: apiClient.phoneType,
@@ -21,7 +21,8 @@ export function mapClientToUserData(apiClient: any): UserData {
 function mapAddress(address: any): Address {
   return {
     id: address.id,
-    apelido: "", // não vem da API
+    idApi: address.id,
+    apelido: address.addressNickname, // não vem da API
     bairro: address.neighborhood,
     cep: address.cep,
     rua: address.street,
@@ -32,8 +33,8 @@ function mapAddress(address: any): Address {
     pais: address.country,
     tipoLogradouro: address.typeStreet,
     tipo: address.typeResidence,
-    isCobranca: false, // default
-    isEntrega: true, // default
+    isCobranca: address.isBillingAddress,
+    isEntrega: address.isDeliveryAddress,
   };
 }
 
@@ -41,12 +42,13 @@ function mapAddress(address: any): Address {
 function mapCard(card: any): Card {
   return {
     id: card.id,
+    idApi: card.id,
     numero: card.cardNumber,
-    nomeImpresso: card.cardName,
-    apelido: "", // não vem da API
+    nomeImpresso: card.cardHolderName,
+    apelido: card.cardName,
     cvv: card.securityCode,
     validade: card.cardExpirationDate,
-    isPreferencial: false, // default
+    isPreferencial: card.isMainCard,
     bandeira: card.cardFlag,
   };
 }

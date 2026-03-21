@@ -1,5 +1,6 @@
 export interface Address {
   id: string;
+  idApi: string;
   apelido: string;
   bairro: string;
   cep: string;
@@ -20,6 +21,7 @@ export interface LoginData {
 }
 export interface Card {
   id: string;
+  idApi: string;
   numero: string;
   nomeImpresso: string;
   apelido: string;

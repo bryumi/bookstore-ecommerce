@@ -2,10 +2,14 @@ import { UserData } from "@/types/mock.interface";
 import { useFormContext } from "react-hook-form";
 import SectionTitle from "../SectionTitle";
 import Input from "../Input";
-import { formatCPF, formatPhone, maskCPF } from "@/utils/mask";
+import { formatPhone, maskCPF } from "@/utils/mask";
 import Select from "../Select";
 
-const StepPersonal = () => {
+const StepPersonal = ({
+  formMode = "register",
+}: {
+  formMode?: "edit" | "register";
+}) => {
   const {
     register,
     formState: { errors },
@@ -31,21 +35,25 @@ const StepPersonal = () => {
           registration={register("email")}
           error={e.email?.message}
         />
-        <Input
-          label="Senha"
-          type="password"
-          required
-          hint="Mín. 8 caracteres, 1 maiúscula, 1 número"
-          registration={register("senha")}
-          error={e.senha?.message}
-        />
-        <Input
-          label="Confirmar Senha"
-          type="password"
-          required
-          registration={register("confirmarSenha")}
-          error={e.confirmarSenha?.message}
-        />
+        {formMode === "register" && (
+          <Input
+            label="Senha"
+            type="password"
+            required
+            hint="Mín. 8 caracteres, 1 maiúscula, 1 número"
+            registration={register("senha")}
+            error={e.senha?.message}
+          />
+        )}
+        {formMode === "register" && (
+          <Input
+            label="Confirmar Senha"
+            type="password"
+            required
+            registration={register("confirmarSenha")}
+            error={e.confirmarSenha?.message}
+          />
+        )}
         <Input
           label="CPF"
           placeholder="000.000.000-00"

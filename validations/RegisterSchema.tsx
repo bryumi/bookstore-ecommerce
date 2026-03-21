@@ -4,7 +4,7 @@ import * as yup from "yup";
 
 export const addressSchema = yup.object({
   id: yup.string().required(),
-
+  idApi: yup.string().notRequired(),
   apelido: yup.string().max(50, "Apelido deve ter no máximo 50 caracteres"),
 
   cep: yup
@@ -64,7 +64,7 @@ export const addressSchema = yup.object({
 
 export const cardSchema = yup.object({
   id: yup.string().required(),
-
+  idApi: yup.string().notRequired(),
   numero: yup
     .string()
     .required("Número do cartão é obrigatório")

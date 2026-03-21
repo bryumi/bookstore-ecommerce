@@ -6,11 +6,11 @@ interface Props {
   onSuccess?: () => void;
   onError?: (error: any) => void;
 }
-export const useCreateClient = ({ onSuccess, onError }: Props) => {
+export const useUpdateClient = ({ onSuccess, onError }: Props) => {
   return useMutation({
-    mutationKey: ["create-client"],
-    mutationFn: async (form: UserData) => {
-      await api.post(`clients`, {
+    mutationKey: ["update-client"],
+    mutationFn: async ({ form, id }: { form: UserData; id: string }) => {
+      await api.put(`clients/${id}`, {
         name: form.nome,
         dateBirth: form.dataNascimento,
         cpf: form.cpf,
@@ -19,7 +19,10 @@ export const useCreateClient = ({ onSuccess, onError }: Props) => {
         phoneNumber: form.telefone,
         phoneType: form.tipoTelefone,
         email: form.email,
+        password: form.senha,
+        confirmPassword: form.confirmarSenha,
         addresses: form.enderecos.map((address) => ({
+          id: address.idApi,
           typeResidence: address.tipo,
           addressNickname: address.apelido,
           typeStreet: address.tipoLogradouro,
@@ -35,6 +38,7 @@ export const useCreateClient = ({ onSuccess, onError }: Props) => {
           isBillingAddress: address.isCobranca,
         })),
         creditCard: form.cartoes.map((card) => ({
+          id: card.idApi,
           cardNumber: card.numero,
           cardName: card.apelido,
           cardExpirationDate: card.validade,

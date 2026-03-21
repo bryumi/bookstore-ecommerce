@@ -12,24 +12,21 @@ import ModalChangePassword from "../Modals/ModalChangePassword";
 
 const ProfileForm = ({
   loggedUser,
-  editSection,
-  setEditSection,
   onSave,
   onLogout,
   isPageProfile = false,
   onCheckout,
-  onSuccess,
+  isEdit,
+  setIsEdit,
 }: {
   loggedUser?: UserData;
-  editSection: "personal" | "addresses" | "cards" | null;
-  setEditSection: (s: "personal" | "addresses" | "cards" | null) => void;
   onSave: (user: UserData) => void;
   onLogout: () => void;
   isPageProfile?: boolean;
   onCheckout?: () => void;
-  onSuccess?: (user: UserData) => void;
+  isEdit: boolean;
+  setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const [isEdit, setIsEdit] = useState(false);
   const [modalChangePassword, setModalChangePassword] = useState(false);
   const methods = useForm<UserData>({
     resolver: yupResolver(registerSchema),
@@ -50,7 +47,7 @@ const ProfileForm = ({
   };
 
   const onSubmit = (data: UserData) => {
-    if (onSuccess) onSuccess(data);
+    onSave(data);
   };
   const sections = [
     {
@@ -170,9 +167,6 @@ const ProfileForm = ({
                 <div key={key} className="bg-white border border-charcoal/8">
                   <button
                     type="button"
-                    onClick={() =>
-                      setEditSection(editSection === key ? null : key)
-                    }
                     className="w-full flex items-center justify-between px-6 py-5 hover:bg-charcoal/2 transition-colors group"
                   >
                     <div className="flex items-center gap-4">
@@ -210,7 +204,7 @@ const ProfileForm = ({
                     noValidate
                   >
                     <div className="bg-white border border-charcoal/8 p-8 space-y-6">
-                      <StepPersonal />
+                      <StepPersonal formMode="edit" />
                       <StepAddresses />
                       <StepCards />
                       {/* <StepReview data={watch()} /> */}
