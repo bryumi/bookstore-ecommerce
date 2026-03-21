@@ -55,7 +55,6 @@ const RegisterForm = ({
           </div>
         </div>
 
-        {/* Single form wraps all steps — FormProvider shares context to sub-components */}
         <FormProvider {...methods}>
           <form
             onSubmit={handleSubmit(onSubmit, (errs) => console.log(errs))}

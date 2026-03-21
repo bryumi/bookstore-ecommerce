@@ -5,7 +5,7 @@ export default function Footer() {
     <footer className="bg-charcoal text-cream mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* About */}
+
           <div>
             <h3 className="font-display font-bold text-xl mb-4 text-gold">
               Sobre Nós
@@ -17,7 +17,7 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Quick Links */}
+
           <div>
             <h3 className="font-display font-bold text-xl mb-4 text-gold">
               Links Rápidos
@@ -50,7 +50,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Categories */}
           <div>
             <h3 className="font-display font-bold text-xl mb-4 text-gold">
               Categorias
@@ -64,7 +63,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact */}
           <div>
             <h3 className="font-display font-bold text-xl mb-4 text-gold">
               Contato
@@ -108,7 +106,7 @@ export default function Footer() {
 
         <div className="border-t border-cream/20 mt-8 pt-8 text-center">
           <p className="text-cream/60 font-sans text-sm">
-            © 2026 Livraria Elegante. Todos os direitos reservados.
+            © 2026 Livraria Booklovers. Todos os direitos reservados.
           </p>
         </div>
       </div>

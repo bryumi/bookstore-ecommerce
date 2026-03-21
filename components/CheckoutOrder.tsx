@@ -29,7 +29,7 @@ export interface OrderPayload {
 }
 interface CardPayment {
   cardId: string;
-  value: string; // string so user can type freely, converted to number on submit
+  value: string;
 }
 
 interface OrderSummaryProps {
@@ -66,27 +66,26 @@ export default function OrderSummary({
   const persistUser = useCallback(
     (updated: UserData) => {
       setUser(updated);
-      // Also persist to localStorage so it survives refresh
+
       localStorage.setItem("bookstore-user", JSON.stringify(updated));
       onUserUpdate?.(updated);
     },
     [onUserUpdate],
   );
-  // ── Address add ──
+
   const handleAddAddress = (address: Address) => {
     if (!user) return;
     const updated = { ...user, enderecos: [...user?.enderecos, address] };
     persistUser(updated);
-    // Auto-select newly added address
+
     setSelectedAddressId(address.id);
   };
 
-  // ── Card add ──
   const handleAddCard = (card: Card) => {
     if (!user) return;
     const updated = { ...user, cartoes: [...user.cartoes, card] };
     persistUser(updated);
-    // Auto-add to payment list with empty value
+
     setCardPayments((prev) => [...prev, { cardId: card.id, value: "" }]);
   };
 
@@ -94,7 +93,6 @@ export default function OrderSummary({
 
   const total = getCartTotal();
 
-  // ── Payment math ──
   const allocatedTotal = useMemo(
     () => cardPayments.reduce((sum, p) => sum + parseValue(p.value), 0),
     [cardPayments],
@@ -107,14 +105,12 @@ export default function OrderSummary({
 
   const isBalanced = Math.abs(allocatedTotal - total) < 0.01;
 
-  // ── Card helpers ──
   const selectedCardIds = cardPayments.map((p) => p.cardId);
 
   const addCard = (cardId: string) => {
     if (selectedCardIds.includes(cardId)) return;
     setCardPayments((prev) => [
       ...prev.map((p, i) => {
-        // on first add, distribute evenly
         return p;
       }),
       { cardId, value: "" },
@@ -127,7 +123,6 @@ export default function OrderSummary({
   };
 
   const updateValue = (cardId: string, value: string) => {
-    // allow only numbers and single comma/dot
     const clean = value.replace(/[^0-9.,]/g, "").replace(/,/g, ".");
     setCardPayments((prev) =>
       prev.map((p) => (p.cardId === cardId ? { ...p, value: clean } : p)),
@@ -141,7 +136,6 @@ export default function OrderSummary({
     setCardPayments((prev) =>
       prev.map((p, i) => ({
         ...p,
-        // last card absorbs rounding diff
         value:
           i === prev.length - 1
             ? (total - parseFloat(share) * (prev.length - 1)).toFixed(2)
@@ -151,7 +145,6 @@ export default function OrderSummary({
     setError(null);
   };
 
-  // ── Submit ──
   const handleConfirm = () => {
     setError(null);
 
@@ -210,7 +203,6 @@ export default function OrderSummary({
         onAdd={handleAddCard}
       />
       <div className="w-full space-y-6 px-11">
-        {/* ── Order items ──────────────────────────────────────────────────────── */}
         <div className="bg-white border border-charcoal/8">
           <div className="px-6 pt-6 pb-2">
             <SectionLabel>Resumo do Pedido</SectionLabel>
@@ -244,7 +236,6 @@ export default function OrderSummary({
             ))}
           </div>
 
-          {/* Totals */}
           <div className="px-6 pt-4 pb-6 space-y-2 border-t border-charcoal/5 mt-2">
             <div className="flex justify-between font-body text-lg text-charcoal/50">
               <span>Subtotal</span>
@@ -270,7 +261,6 @@ export default function OrderSummary({
           </div>
         </div>
 
-        {/* ── Delivery address ─────────────────────────────────────────────────── */}
         <div className="bg-white border border-charcoal/8">
           <div className="px-6 pt-6 pb-4">
             <SectionLabel
@@ -322,7 +312,6 @@ export default function OrderSummary({
                           : "border-charcoal/10 hover:border-charcoal/25"
                       }`}
                     >
-                      {/* Selection indicator */}
                       <div
                         className={`absolute top-4 right-4 w-4 h-4 border-2 flex items-center justify-center transition-all duration-200
                       ${isSelected ? "border-charcoal bg-charcoal" : "border-charcoal/20"}`}
@@ -345,11 +334,6 @@ export default function OrderSummary({
                       </div>
 
                       <div className="flex items-start gap-3 pr-8">
-                        {/* <div
-                        className={`mt-0.5 text-charcoal/40 ${isSelected ? "text-charcoal" : ""}`}
-                      >
-                        <AddressTypeIcon tipo={addr.tipo} />
-                      </div> */}
                         <div>
                           <div className="flex items-center gap-2 mb-1">
                             <p className="font-sans text-lg font-semibold text-charcoal">
@@ -384,7 +368,6 @@ export default function OrderSummary({
           </div>
         </div>
 
-        {/* ── Payment ──────────────────────────────────────────────────────────── */}
         <div className="bg-white border border-charcoal/8">
           <div className="px-6 pt-6 pb-6">
             <SectionLabel
@@ -416,7 +399,6 @@ export default function OrderSummary({
               Forma de Pagamento
             </SectionLabel>
 
-            {/* Available cards to add */}
             <div className="mb-4">
               <p className="font-sans text-base uppercase tracking-[0.15em] text-charcoal/35 mb-2">
                 Seus cartões
@@ -448,7 +430,6 @@ export default function OrderSummary({
                           {maskCard(card.numero)}
                         </span>
                       </div>
-                      {/* <BrandBadge numero={card.numero} /> */}
                       {alreadyAdded && (
                         <svg
                           className="w-3 h-3 text-cream/60 ml-1"
@@ -475,7 +456,6 @@ export default function OrderSummary({
               </div>
             </div>
 
-            {/* Value allocation per card */}
             {cardPayments.length > 0 && (
               <div className="mt-5 space-y-3">
                 <div className="flex items-center justify-between">
@@ -506,7 +486,6 @@ export default function OrderSummary({
                         key={payment.cardId}
                         className="border border-charcoal/10 p-3 space-y-2"
                       >
-                        {/* Card info row */}
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <span className="font-sans text-base font-semibold text-charcoal">
@@ -537,7 +516,6 @@ export default function OrderSummary({
                           </button>
                         </div>
 
-                        {/* Value input */}
                         <div className="flex items-center gap-2">
                           <span className="font-sans text-base text-charcoal/40">
                             R$
@@ -563,7 +541,6 @@ export default function OrderSummary({
                           )}
                         </div>
 
-                        {/* Progress bar */}
                         {parsedVal > 0 && (
                           <div className="h-0.5 bg-charcoal/6 overflow-hidden">
                             <div
@@ -577,7 +554,6 @@ export default function OrderSummary({
                   })}
                 </div>
 
-                {/* Balance tracker */}
                 <div
                   className={`flex items-center justify-between p-3 border transition-colors duration-200
                 ${
@@ -665,7 +641,6 @@ export default function OrderSummary({
           </div>
         </div>
 
-        {/* ── Error ────────────────────────────────────────────────────────────── */}
         {error && (
           <div className="flex items-start gap-3 p-4 border border-burgundy/30 bg-burgundy/4">
             <svg
@@ -685,7 +660,6 @@ export default function OrderSummary({
           </div>
         )}
 
-        {/* ── Confirm ──────────────────────────────────────────────────────────── */}
         <button
           type="button"
           onClick={handleConfirm}

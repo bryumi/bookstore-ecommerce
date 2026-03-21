@@ -65,7 +65,6 @@ export default function CartPage() {
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="flex flex-col sm:flex-row gap-6">
-                  {/* Book Image */}
                   <div className="w-full sm:w-32 h-48 sm:h-auto flex-shrink-0">
                     <img
                       src={item.image}
@@ -74,7 +73,6 @@ export default function CartPage() {
                     />
                   </div>
 
-                  {/* Book Info */}
                   <div className="flex-grow">
                     <div className="flex justify-between items-start mb-2">
                       <div>
@@ -107,7 +105,6 @@ export default function CartPage() {
                     </div>
 
                     <div className="flex items-center justify-between mt-4">
-                      {/* Quantity Control */}
                       <div className="flex items-center space-x-3">
                         <span className="font-sans text-sm text-charcoal/60">
                           Quantidade:
@@ -135,7 +132,6 @@ export default function CartPage() {
                         </div>
                       </div>
 
-                      {/* Price */}
                       <div className="text-right">
                         <p className="font-display text-2xl font-bold text-burgundy">
                           R$ {(item.price * item.quantity).toFixed(2)}
@@ -151,7 +147,6 @@ export default function CartPage() {
             ))}
           </div>
 
-          {/* Order Summary */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-md p-6 sticky top-24 animate-slide-in">
               <h2 className="font-display text-2xl font-bold text-charcoal mb-6">

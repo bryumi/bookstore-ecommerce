@@ -48,7 +48,6 @@ export default function RegisterPage() {
     // setLoggedUser(null);
   };
 
-  // ── Choose ──────────────────────────────────────────────────────────────────
 
   return (
     <RegisterForm

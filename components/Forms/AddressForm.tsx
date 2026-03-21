@@ -25,7 +25,6 @@ const AddressForm = ({
     formState: { errors },
   } = useFormContext<UserData>();
 
-  // Drill into nested errors: errors.enderecos?.[index]
   const e = (errors.enderecos as any)?.[index] ?? {};
 
   const fetchCep = async (cep: string) => {

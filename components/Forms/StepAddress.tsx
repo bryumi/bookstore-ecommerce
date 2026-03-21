@@ -33,7 +33,6 @@ const StepAddresses = () => {
         ))}
       </div>
 
-      {/* Array-level error (e.g. "ao menos um de cobrança") */}
       <FieldError
         message={
           (errors.enderecos as any)?.root?.message ??

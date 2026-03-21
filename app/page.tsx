@@ -25,7 +25,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-burgundy via-burgundy/90 to-charcoal text-cream py-20 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 left-10 w-64 h-64 bg-gold rounded-full blur-3xl"></div>
@@ -42,7 +41,6 @@ export default function HomePage() {
               Uma coleção cuidadosamente selecionada dos melhores livros para transformar sua biblioteca pessoal
             </p>
             
-            {/* Search Bar */}
             <div className="max-w-2xl mx-auto">
               <div className="relative">
                 <input
@@ -66,7 +64,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Category Filter */}
       <section className="bg-white border-b border-charcoal/10 sticky top-20 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center space-x-2 overflow-x-auto scrollbar-hide">
@@ -90,7 +87,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Books Grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {filteredBooks.length === 0 ? (
           <div className="text-center py-20">
@@ -130,7 +126,6 @@ export default function HomePage() {
         )}
       </section>
 
-      {/* Features Section */}
       <section className="bg-gradient-to-br from-charcoal to-charcoal/95 text-cream py-20 mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="font-display text-4xl font-bold text-center mb-12 text-gold">
