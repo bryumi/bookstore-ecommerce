@@ -6,15 +6,16 @@ import {
   IChangePassword,
 } from "@/validations/ChangePasswordSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useChangePassword } from "@/services/clients/updatePassword";
+import { useSnackbar } from "@/hooks/useSnackbar";
+import { useAuth } from "@/hooks/useAuth";
 
 const ModalChangePassword = ({
   open,
   onClose,
-  onSuccess,
 }: {
   open: boolean;
   onClose: () => void;
-  onSuccess: (card: IChangePassword) => void;
 }) => {
   const {
     register,
@@ -24,7 +25,21 @@ const ModalChangePassword = ({
   } = useForm<IChangePassword>({
     resolver: yupResolver(ChangePasswordSchema),
   });
-  const onSubmit = (data: IChangePassword) => onSuccess(data);
+  const { showSnackbar } = useSnackbar();
+  const { user } = useAuth();
+  const { mutate: mutateChangePassword } = useChangePassword({
+    onSuccess: () => {
+      showSnackbar("Senha alterada com sucesso!", "success");
+      onClose();
+    },
+    onError(error) {
+      console.log(error.response.data.error);
+      showSnackbar(error.response.data.error, "error");
+    },
+  });
+  const onSubmit = (data: IChangePassword) => {
+    mutateChangePassword({ form: data, id: user.id });
+  };
   return (
     <Modal
       open={open}

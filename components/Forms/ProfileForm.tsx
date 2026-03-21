@@ -231,7 +231,6 @@ const ProfileForm = ({
       <ModalChangePassword
         open={modalChangePassword}
         onClose={() => setModalChangePassword(false)}
-        onSuccess={(data) => console.log(data)}
       />
     </>
   );

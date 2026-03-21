@@ -4,6 +4,7 @@ export const generateId = () => Math.random().toString(36).substring(2, 9);
 
 export const emptyAddress = (): Address => ({
   id: generateId(),
+  idApi: "",
   apelido: "",
   cep: "",
   rua: "",
@@ -21,6 +22,7 @@ export const emptyAddress = (): Address => ({
 
 export const emptyCard = (): Card => ({
   id: generateId(),
+  idApi: "",
   numero: "",
   nomeImpresso: "",
   apelido: "",

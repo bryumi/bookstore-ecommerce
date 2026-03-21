@@ -23,9 +23,7 @@ const steps: { key: RegisterStep; label: string }[] = [
 export default function CheckoutForm() {
   const [mode, setMode] = useState<FormMode>("choose");
   const [registerStep, setRegisterStep] = useState<RegisterStep>("personal");
-  const [editSection, setEditSection] = useState<
-    "personal" | "addresses" | "cards" | null
-  >(null);
+  const [isEdit, setIsEdit] = useState(false);
   const router = useRouter();
   const stepIndex = steps.findIndex((s) => s.key === registerStep);
   const { clearCart } = useStore();
@@ -123,10 +121,10 @@ export default function CheckoutForm() {
   if (mode === "profile")
     return (
       <ProfileForm
-        editSection={editSection}
-        setEditSection={setEditSection}
         onSave={saveUser}
         onLogout={handleLogout}
+        setIsEdit={setIsEdit}
+        isEdit={isEdit}
         onCheckout={() => {
           setMode("checkout");
           console.log("checkout");
