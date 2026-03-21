@@ -28,23 +28,20 @@ export default function CheckoutForm() {
   >(null);
   const router = useRouter();
   const stepIndex = steps.findIndex((s) => s.key === registerStep);
-  const { loggedUser, setLoggedUser, clearCart } = useStore();
+  const { clearCart } = useStore();
   useEffect(() => {
     const stored = localStorage.getItem("bookstore-user");
     if (stored && stored !== "null") {
-      setLoggedUser(JSON.parse(stored));
       setMode("profile");
     }
   }, []);
 
   const saveUser = (user: UserData) => {
     localStorage.setItem("bookstore-user", JSON.stringify(user));
-    setLoggedUser(user);
   };
 
   const handleLogout = () => {
     localStorage.removeItem("bookstore-user");
-    setLoggedUser(null);
     setMode("choose");
   };
 
@@ -99,7 +96,6 @@ export default function CheckoutForm() {
     return (
       <LoginForm
         onSuccess={(user) => {
-          setLoggedUser(user);
           setMode("profile");
         }}
         onRegister={() => setMode("register")}
@@ -127,10 +123,9 @@ export default function CheckoutForm() {
     );
 
   // ── Profile ─────────────────────────────────────────────────────────────────
-  if (mode === "profile" && loggedUser)
+  if (mode === "profile")
     return (
       <ProfileForm
-        loggedUser={loggedUser}
         editSection={editSection}
         setEditSection={setEditSection}
         onSave={saveUser}
@@ -141,10 +136,9 @@ export default function CheckoutForm() {
         }}
       />
     );
-  if (mode === "checkout" && loggedUser)
+  if (mode === "checkout")
     return (
       <OrderSummary
-        user={loggedUser}
         onConfirm={() => {
           alert("Compra confirmada! Obrigado por comprar conosco.");
           router.push("/orders");

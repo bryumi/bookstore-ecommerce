@@ -29,9 +29,7 @@ interface StoreContextType {
   cart: CartItem[];
   orders: Order[];
   userData: UserData;
-  loggedUser: UserData | null;
   setUserData: React.Dispatch<React.SetStateAction<UserData>>;
-  setLoggedUser: React.Dispatch<React.SetStateAction<UserData | null>>;
   addToCart: (book: Book) => void;
   removeFromCart: (bookId: number) => void;
   updateQuantity: (bookId: number, quantity: number) => void;
@@ -49,16 +47,12 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   const [cart, setCart] = useState<CartItem[]>([]);
   const [orders, setOrders] = useState<Order[]>([mockOrder]);
   const [userData, setUserData] = useState<UserData>(emptyUser());
-  const [loggedUser, setLoggedUser] = useState<UserData | null>(null);
   // Load cart and orders from localStorage
   useEffect(() => {
     const savedCart = localStorage.getItem("bookstore-cart");
     const savedOrders = localStorage.getItem("bookstore-orders");
     const savedUser = localStorage.getItem("bookstore-user");
 
-    if (savedUser) {
-      setLoggedUser(JSON.parse(savedUser));
-    }
     if (savedCart) {
       setCart(JSON.parse(savedCart));
     }
@@ -78,9 +72,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.setItem("bookstore-orders", JSON.stringify(orders));
   }, [orders]);
 
-  useEffect(() => {
-    localStorage.setItem("bookstore-user", JSON.stringify(loggedUser));
-  }, [loggedUser]);
+  // useEffect(() => {
+  //   localStorage.setItem("bookstore-user", JSON.stringify(loggedUser));
+  // }, [loggedUser]);
 
   const addToCart = (book: Book) => {
     setCart((prevCart) => {
@@ -147,9 +141,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
         cart,
         orders,
         userData,
-        loggedUser,
         setUserData,
-        setLoggedUser,
         addToCart,
         removeFromCart,
         updateQuantity,

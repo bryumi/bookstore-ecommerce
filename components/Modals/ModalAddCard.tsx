@@ -60,6 +60,7 @@ const AddCardModal = ({
       ...form,
       id: generateId(),
       nomeImpresso: form.nomeImpresso.toUpperCase(),
+      bandeira: "Visa",
     });
     setForm(emptyCardForm());
     setErrors({});

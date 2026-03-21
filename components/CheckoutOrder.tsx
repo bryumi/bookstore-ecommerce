@@ -33,7 +33,7 @@ interface CardPayment {
 }
 
 interface OrderSummaryProps {
-  user: UserData;
+  user?: UserData;
   onConfirm: (order: OrderPayload) => void;
   onUserUpdate?: (updated: UserData) => void;
 }
@@ -42,24 +42,24 @@ export default function OrderSummary({
   onConfirm,
   onUserUpdate,
 }: OrderSummaryProps) {
-  const [user, setUser] = useState<UserData>(initialUser);
+  const [user, setUser] = useState<UserData>();
 
-  // Keep in sync if parent updates (e.g. profile edit)
-  useEffect(() => {
-    setUser(initialUser);
-  }, [initialUser]);
+  // useEffect(() => {
+  //   setUser(initialUser);
+  // }, [initialUser]);
   const { cart, getCartTotal } = useStore();
   const [addressModalOpen, setAddressModalOpen] = useState(false);
   const [cardModalOpen, setCardModalOpen] = useState(false);
-  // ── State ──
   const [selectedAddressId, setSelectedAddressId] = useState<string>(
     // pre-select the first delivery address, or first address
-    user.enderecos.find((a) => a.isEntrega)?.id ?? user.enderecos[0]?.id ?? "",
+    user?.enderecos.find((a) => a.isEntrega)?.id ??
+      user?.enderecos[0]?.id ??
+      "",
   );
 
   const [cardPayments, setCardPayments] = useState<CardPayment[]>(
     // pre-select preferential card if exists
-    user.cartoes.some((c) => c.isPreferencial)
+    user?.cartoes.some((c) => c.isPreferencial)
       ? [{ cardId: user.cartoes.find((c) => c.isPreferencial)!.id, value: "" }]
       : [],
   );
@@ -74,7 +74,8 @@ export default function OrderSummary({
   );
   // ── Address add ──
   const handleAddAddress = (address: Address) => {
-    const updated = { ...user, enderecos: [...user.enderecos, address] };
+    if (!user) return;
+    const updated = { ...user, enderecos: [...user?.enderecos, address] };
     persistUser(updated);
     // Auto-select newly added address
     setSelectedAddressId(address.id);
@@ -82,6 +83,7 @@ export default function OrderSummary({
 
   // ── Card add ──
   const handleAddCard = (card: Card) => {
+    if (!user) return;
     const updated = { ...user, cartoes: [...user.cartoes, card] };
     persistUser(updated);
     // Auto-add to payment list with empty value
@@ -169,7 +171,7 @@ export default function OrderSummary({
     }
     const zeroCard = cardPayments.find((p) => parseValue(p.value) <= 0);
     if (zeroCard) {
-      const card = user.cartoes.find((c) => c.id === zeroCard.cardId);
+      const card = user?.cartoes.find((c) => c.id === zeroCard.cardId);
       setError(
         `O cartão "${card?.apelido || maskCard(card?.numero ?? "")}" não possui valor alocado.`,
       );
@@ -188,10 +190,12 @@ export default function OrderSummary({
 
   if (cart.length === 0) return null;
 
-  const deliveryAddresses = user.enderecos.filter((a) => a.isEntrega);
-  const allAddresses = user.enderecos;
+  const deliveryAddresses = user?.enderecos.filter((a) => a.isEntrega);
+  const allAddresses = user?.enderecos;
   const addressList =
-    deliveryAddresses.length > 0 ? deliveryAddresses : allAddresses;
+    deliveryAddresses && deliveryAddresses?.length > 0
+      ? deliveryAddresses
+      : allAddresses;
 
   return (
     <>
@@ -298,13 +302,13 @@ export default function OrderSummary({
               Endereço de Entrega
             </SectionLabel>
 
-            {addressList.length === 0 ? (
+            {addressList?.length === 0 ? (
               <p className="font-body text-lg italic text-charcoal/40">
                 Nenhum endereço cadastrado.
               </p>
             ) : (
               <div className="space-y-2">
-                {addressList.map((addr) => {
+                {addressList?.map((addr) => {
                   const isSelected = selectedAddressId === addr.id;
                   return (
                     <button
@@ -418,7 +422,7 @@ export default function OrderSummary({
                 Seus cartões
               </p>
               <div className="flex flex-wrap gap-2">
-                {user.cartoes.map((card) => {
+                {user?.cartoes.map((card) => {
                   const alreadyAdded = selectedCardIds.includes(card.id);
                   return (
                     <button
@@ -491,7 +495,7 @@ export default function OrderSummary({
 
                 <div className="space-y-2">
                   {cardPayments.map((payment: any) => {
-                    const card = user.cartoes.find(
+                    const card = user?.cartoes?.find(
                       (c: any) => c.id === payment.cardId,
                     )!;
                     const parsedVal = parseValue(payment.value);

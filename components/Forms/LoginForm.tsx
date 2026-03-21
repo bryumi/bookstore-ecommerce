@@ -9,29 +9,23 @@ const LoginForm = ({
   onSuccess,
   onRegister,
   onBack,
+  isSubmitting,
 }: {
-  onSuccess: (user: UserData) => void;
+  onSuccess: (user: LoginData) => void;
   onRegister: () => void;
   onBack: () => void;
+  isSubmitting?: boolean;
 }) => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<LoginData>({
     resolver: yupResolver(loginSchema),
   });
 
   const onSubmit = (data: LoginData) => {
-    const stored = localStorage.getItem("bookstore-user");
-    if (stored) {
-      const user: UserData = JSON.parse(stored);
-      if (user.email === data.email && user.senha === data.senha) {
-        onSuccess(user);
-        return;
-      }
-    }
-    alert("Email ou senha incorretos.");
+    onSuccess(data);
   };
 
   return (
@@ -73,7 +67,9 @@ const LoginForm = ({
             error={errors.senha?.message}
           />
           <div className="pt-2">
-            <PrimaryBtn type="submit">Entrar →</PrimaryBtn>
+            <PrimaryBtn type="submit" disabled={isSubmitting}>
+              Entrar →
+            </PrimaryBtn>
           </div>
         </form>
 

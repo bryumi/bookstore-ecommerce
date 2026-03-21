@@ -1,32 +1,44 @@
 "use client";
 import ProfileForm from "@/components/Forms/ProfileForm";
+import { useAuth } from "@/hooks/useAuth";
 import { useStore } from "@/lib/store-context";
+import { useGetClientData } from "@/services/clients/getClientData";
 import { UserData } from "@/types/mock.interface";
+import { mapClientToUserData } from "@/utils/mappedClientToUser";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const ProfilePage = () => {
   const [editSection, setEditSection] = useState<
     "personal" | "addresses" | "cards" | null
   >(null);
 
-  const { loggedUser, setLoggedUser } = useStore();
   const router = useRouter();
+  const { user, logout } = useAuth();
+  const { data: clientData } = useGetClientData(user?.id ?? "");
+  const [loading, setLoading] = useState(true);
 
-  if (!loggedUser) {
-    return <div>Loading...</div>;
-  }
+  const [loggedUser, setLoggedUser] = useState<UserData>();
+  useEffect(() => {
+    if (clientData) {
+      const mapClient = mapClientToUserData(clientData.client);
+      console.log(mapClient);
+      setLoggedUser(mapClient);
+      setLoading(false);
+    }
+  }, [clientData]);
   const saveUser = (user: UserData) => {
     localStorage.setItem("bookstore-user", JSON.stringify(user));
     setLoggedUser(user);
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("bookstore-user");
-    setLoggedUser(null);
+    logout();
     router.push("/");
   };
-  return (
+  return loading ? (
+    <p>Carregando...</p>
+  ) : (
     <ProfileForm
       loggedUser={loggedUser}
       editSection={editSection}

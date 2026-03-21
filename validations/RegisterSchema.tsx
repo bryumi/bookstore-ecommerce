@@ -11,12 +11,20 @@ export const addressSchema = yup.object({
     .string()
     .required("CEP é obrigatório")
     .matches(/^\d{5}-?\d{3}$/, "CEP inválido"),
-
+  tipoLogradouro: yup
+    .string()
+    .required("Tipo de logradouro é obrigatório")
+    .max(50, "Tipo de logradouro deve ter no.maxcdn 50 caracteres"),
   rua: yup
     .string()
     .required("Rua é obrigatória")
     .min(3, "Rua deve ter no mínimo 3 caracteres")
     .max(100, "Rua deve ter no máximo 100 caracteres"),
+  bairro: yup
+    .string()
+    .required("Bairro é obrigatório")
+    .min(3, "Bairro deve ter no mínimo 3 caracteres")
+    .max(100, "Bairro deve ter no.maxcdn 100 caracteres"),
 
   numero: yup
     .string()
@@ -45,8 +53,8 @@ export const addressSchema = yup.object({
 
   tipo: yup
     .string()
-    .oneOf(["casa", "apartamento", "comercial", "outro"], "Tipo inválido")
-    .required("Tipo é obrigatório"),
+    .required("Tipo de endereço é obrigatório")
+    .max(100, "Tipo de endereço deve ter máximo 100 caracteres"),
 
   isCobranca: yup.boolean().required(),
   isEntrega: yup.boolean().required(),
@@ -76,6 +84,7 @@ export const cardSchema = yup.object({
     .string()
     .required("CVV é obrigatório")
     .matches(/^\d{3,4}$/, "CVV deve ter 3 ou 4 dígitos"),
+  bandeira: yup.string().required(),
 
   validade: yup
     .string()
@@ -131,7 +140,7 @@ export const personalSchema = yup.object({
       const d = new Date(value);
       return !isNaN(d.getTime()) && d <= new Date();
     }),
-
+  tipoTelefone: yup.string().required("Tipo de telefone é obrigatório"),
   telefone: yup
     .string()
     .required("Telefone é obrigatório")
@@ -142,10 +151,7 @@ export const personalSchema = yup.object({
 
   genero: yup
     .string()
-    .oneOf(
-      ["masculino", "feminino", "outro", "nao-informar"],
-      "Selecione uma opção",
-    )
+    .oneOf(["male", "female", "other"], "Selecione uma opção")
     .required("Gênero é obrigatório"),
 });
 
@@ -159,9 +165,6 @@ export const senhaSchema = yup.object({
     .matches(/[A-Z]/, "Senha deve conter ao menos uma letra maiúscula")
     .matches(/[a-z]/, "Senha deve conter ao menos uma letra minúscula")
     .matches(/\d/, "Senha deve conter ao menos um número"),
-});
-
-export const senhaConfirmacaoSchema = senhaSchema.shape({
   confirmarSenha: yup
     .string()
     .required("Confirmação de senha é obrigatória")

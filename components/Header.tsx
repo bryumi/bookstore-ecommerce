@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { useStore } from "@/lib/store-context";
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Header() {
-  const { getCartCount, loggedUser } = useStore();
+  const { getCartCount } = useStore();
+  const { isAuthenticated } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const cartCount = getCartCount();
 
@@ -52,7 +54,7 @@ export default function Header() {
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-burgundy group-hover:w-full transition-all duration-300"></span>
             </Link>
 
-            {loggedUser && (
+            {isAuthenticated && (
               <Link
                 href="/orders"
                 className="font-sans font-medium text-charcoal hover:text-burgundy transition-colors relative group"
@@ -62,7 +64,7 @@ export default function Header() {
               </Link>
             )}
           </nav>
-          {loggedUser && (
+          {isAuthenticated && (
             <Link
               href="/profile"
               className="hidden md:flex items-center space-x-2 btn-primary"
@@ -85,7 +87,7 @@ export default function Header() {
             </Link>
           )}
 
-          {!loggedUser && (
+          {!isAuthenticated && (
             <div className="hidden md:flex items-center space-x-4">
               <Link
                 href="/login"

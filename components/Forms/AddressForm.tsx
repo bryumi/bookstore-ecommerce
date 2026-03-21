@@ -41,6 +41,9 @@ const AddressForm = ({
         setValue(`${prefix}.cidade`, data.localidade || "", {
           shouldValidate: true,
         });
+        setValue(`${prefix}.bairro`, data.bairro || "", {
+          shouldValidate: true,
+        });
         setValue(`${prefix}.estado`, data.uf || "", { shouldValidate: true });
       }
     } catch {}
@@ -101,6 +104,22 @@ const AddressForm = ({
         />
         <div className="col-span-2">
           <Input
+            label="Tipo de Logradouro"
+            required
+            registration={register(`${prefix}.tipoLogradouro`)}
+            error={e.tipoLogradouro?.message}
+          />
+        </div>
+      </div>
+      <div className="grid grid-cols-3 gap-3">
+        <Input
+          label="Bairro"
+          required
+          registration={register(`${prefix}.bairro`)}
+          error={e.bairro?.message}
+        />
+        <div className="col-span-2">
+          <Input
             label="Rua / Logradouro"
             required
             registration={register(`${prefix}.rua`)}
@@ -108,7 +127,6 @@ const AddressForm = ({
           />
         </div>
       </div>
-
       <div className="grid grid-cols-3 gap-3">
         <Input
           label="Número"

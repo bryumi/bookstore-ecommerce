@@ -40,12 +40,26 @@ const StepPersonal = () => {
           error={e.senha?.message}
         />
         <Input
+          label="Confirmar Senha"
+          type="password"
+          required
+          registration={register("confirmarSenha")}
+          error={e.confirmarSenha?.message}
+        />
+        <Input
           label="CPF"
           placeholder="000.000.000-00"
           required
           registration={register("cpf")}
           transform={maskCPF}
           error={e.cpf?.message}
+        />
+        <Input
+          label="Tipo de Telefone"
+          placeholder="residencial, comercial, celular"
+          required
+          registration={register("tipoTelefone")}
+          error={e.tipoTelefone?.message}
         />
         <Input
           label="Telefone"
@@ -68,10 +82,9 @@ const StepPersonal = () => {
           registration={register("genero")}
           error={e.genero?.message}
           options={[
-            { value: "masculino", label: "Masculino" },
-            { value: "feminino", label: "Feminino" },
-            { value: "outro", label: "Outro" },
-            { value: "nao-informar", label: "Prefiro não informar" },
+            { value: "male", label: "Masculino" },
+            { value: "female", label: "Feminino" },
+            { value: "other", label: "Outro" },
           ]}
         />
       </div>

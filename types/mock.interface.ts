@@ -1,6 +1,7 @@
 export interface Address {
   id: string;
   apelido: string;
+  bairro: string;
   cep: string;
   rua: string;
   numero: string;
@@ -8,7 +9,8 @@ export interface Address {
   cidade: string;
   estado: string;
   pais: string;
-  tipo: "casa" | "apartamento" | "comercial" | "outro";
+  tipoLogradouro: string;
+  tipo: string;
   isCobranca: boolean;
   isEntrega: boolean;
 }
@@ -24,16 +26,19 @@ export interface Card {
   cvv: string;
   validade: string;
   isPreferencial: boolean;
+  bandeira: string;
 }
 
 export interface UserData {
   nome: string;
   email: string;
   senha: string;
+  confirmarSenha: string;
   cpf: string;
   dataNascimento: string;
+  tipoTelefone: string;
   telefone: string;
-  genero: "masculino" | "feminino" | "outro" | "nao-informar" | "";
+  genero: string;
   enderecos: Address[];
   cartoes: Card[];
 }
