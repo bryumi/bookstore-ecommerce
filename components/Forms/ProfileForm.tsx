@@ -9,6 +9,10 @@ import StepPersonal from "./StepPersonal";
 import { registerSchema } from "@/validations/RegisterSchema";
 import { useState } from "react";
 import ModalChangePassword from "../Modals/ModalChangePassword";
+import { useDeleteAccount } from "@/services/clients/deleteAccount";
+import { useSnackbar } from "@/hooks/useSnackbar";
+import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 const ProfileForm = ({
   loggedUser,
@@ -36,6 +40,9 @@ const ProfileForm = ({
     shouldFocusError: true,
   } as any);
 
+  const router = useRouter();
+  const { showSnackbar } = useSnackbar();
+  const { user, logout } = useAuth();
   const {
     handleSubmit,
     formState: { isSubmitting, errors },
@@ -45,7 +52,20 @@ const ProfileForm = ({
     console.log("confirm purchase");
     if (onCheckout) onCheckout();
   };
-
+  const { mutate: mutateDeleteAccount } = useDeleteAccount({
+    onSuccess: () => {
+      showSnackbar("Conta deletada!", "success");
+      logout();
+      router.push("/");
+    },
+    onError(error) {
+      showSnackbar(error.response.data.error, "error");
+      console.log(error);
+    },
+  });
+  const handleDeleteAccount = () => {
+    mutateDeleteAccount(user?.id);
+  };
   const onSubmit = (data: UserData) => {
     onSave(data);
   };
@@ -141,12 +161,22 @@ const ProfileForm = ({
               >
                 Sair
               </button>
-              <button
-                onClick={() => setModalChangePassword(true)}
-                className="font-sans text-[10px] uppercase tracking-[0.15em] bg-burgundy text-yellow-50 border border-charcoal/12 px-4 py-2 hover:border-burgundy/30  hover:bg-burgundy/80 transition-all duration-200 mb-1"
-              >
-                Alterar senha
-              </button>
+              {isPageProfile && (
+                <button
+                  onClick={() => setModalChangePassword(true)}
+                  className="font-sans text-[10px] uppercase tracking-[0.15em] bg-burgundy text-yellow-50 border border-charcoal/12 px-4 py-2 hover:border-burgundy/30  hover:bg-burgundy/80 transition-all duration-200 mb-1"
+                >
+                  Alterar senha
+                </button>
+              )}
+              {isPageProfile && (
+                <button
+                  onClick={handleDeleteAccount}
+                  className="font-sans text-[10px] uppercase tracking-[0.15em]  text-charcoal/30 border border-charcoal/12 px-4 py-2 hover:border-burgundy/30 hover:text-burgundy transition-all duration-200 mb-1"
+                >
+                  Excluir conta
+                </button>
+              )}
             </div>
           </div>
 
