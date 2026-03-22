@@ -48,7 +48,6 @@ export default function RegisterPage() {
     // setLoggedUser(null);
   };
 
-
   return (
     <RegisterForm
       stepIndex={stepIndex}
@@ -62,7 +61,6 @@ export default function RegisterPage() {
       onSuccess={(user) => {
         console.log("user", user);
         saveUser(user);
-        router.push("/login");
       }}
     />
   );

@@ -9,6 +9,7 @@ import StepPersonal from "./StepPersonal";
 import { registerSchema } from "@/validations/RegisterSchema";
 import { useState } from "react";
 import ModalChangePassword from "../Modals/ModalChangePassword";
+import Modal from "../Modals/Modal";
 
 const ProfileForm = ({
   loggedUser,
@@ -28,10 +29,11 @@ const ProfileForm = ({
   setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [modalChangePassword, setModalChangePassword] = useState(false);
+  const [modalDeleteAccount, setModalDeleteAccount] = useState(false);
   const methods = useForm<UserData>({
     resolver: yupResolver(registerSchema),
     defaultValues: loggedUser,
-    // Validate only on submit/blur, not on every keystroke
+
     mode: "onTouched",
     shouldFocusError: true,
   } as any);
@@ -44,6 +46,10 @@ const ProfileForm = ({
   const handleConfirmPurchase = () => {
     console.log("confirm purchase");
     if (onCheckout) onCheckout();
+  };
+
+  const handleDelete = () => {
+    console.log("Deletando usuário");
   };
 
   const onSubmit = (data: UserData) => {
@@ -147,6 +153,12 @@ const ProfileForm = ({
               >
                 Alterar senha
               </button>
+              <button
+                onClick={() => setModalDeleteAccount(true)}
+                className="font-sans text-[10px] uppercase tracking-[0.15em] bg-burgundy text-yellow-50 border border-charcoal/12 px-4 py-2 hover:border-burgundy/30  hover:bg-burgundy/80 transition-all duration-200 mb-1"
+              >
+                Excluir conta
+              </button>
             </div>
           </div>
 
@@ -232,6 +244,28 @@ const ProfileForm = ({
         open={modalChangePassword}
         onClose={() => setModalChangePassword(false)}
       />
+      <Modal
+        open={modalDeleteAccount}
+        title="Tem certeza que deseja excluir sua conta?"
+        subtitle="Essa ação não poderá ser desfeita"
+        onClose={() => setModalDeleteAccount(false)}
+      >
+        <div className="flex justify-end gap-3">
+          <button
+            onClick={() => setModalDeleteAccount(false)}
+            className="px-4 py-2 border border-charcoal"
+          >
+            Cancelar
+          </button>
+
+          <button
+            onClick={handleDelete}
+            className="px-4 py-2 bg-burgundy text-white"
+          >
+            Excluir
+          </button>
+        </div>
+      </Modal>
     </>
   );
 };
