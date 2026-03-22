@@ -9,7 +9,7 @@ export const useDeleteAccount = ({ onSuccess, onError }: Props) => {
   return useMutation({
     mutationKey: ["delete-client"],
     mutationFn: async (id: string) => {
-      await api.patch(`clients/${id}`);
+      await api.delete(`clients/${id}`);
     },
     onSuccess,
     onError,

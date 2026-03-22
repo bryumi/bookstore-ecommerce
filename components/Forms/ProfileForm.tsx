@@ -13,6 +13,7 @@ import Modal from "../Modals/Modal";
 import { useSnackbar } from "@/hooks/useSnackbar";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { useDeleteAccount } from "@/services/clients/deleteAccount";
 
 const ProfileForm = ({
   loggedUser,
@@ -48,14 +49,24 @@ const ProfileForm = ({
     handleSubmit,
     formState: { isSubmitting, errors },
   } = methods;
-
+  const { mutate: mutateDeleteAccount } = useDeleteAccount({
+    onSuccess: () => {
+      showSnackbar("Conta deletada!", "success");
+      logout();
+      router.push("/");
+    },
+    onError(error) {
+      showSnackbar(error.response.data.error, "error");
+      console.log(error);
+    },
+  });
   const handleConfirmPurchase = () => {
     console.log("confirm purchase");
     if (onCheckout) onCheckout();
   };
 
   const handleDelete = () => {
-    console.log("Deletando usuário");
+    mutateDeleteAccount(user?.id);
   };
 
   const onSubmit = (data: UserData) => {
