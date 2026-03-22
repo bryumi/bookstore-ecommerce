@@ -3,6 +3,7 @@ import "./globals.css";
 import { StoreProvider } from "@/lib/store-context";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Providers from "@/components/Providers/Providers";
 
 export const metadata: Metadata = {
   title: "Booklovers - Sua Biblioteca Pessoal",
@@ -17,13 +18,15 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body>
-        <StoreProvider>
-          <div className="flex flex-col min-h-screen">
-            <Header />
-            <main className="flex-grow">{children}</main>
-            <Footer />
-          </div>
-        </StoreProvider>
+        <Providers>
+          <StoreProvider>
+            <div className="flex flex-col min-h-screen">
+              <Header />
+              <main className="flex-grow">{children}</main>
+              <Footer />
+            </div>
+          </StoreProvider>
+        </Providers>
       </body>
     </html>
   );

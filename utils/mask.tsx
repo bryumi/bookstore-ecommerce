@@ -4,6 +4,7 @@ export const generateId = () => Math.random().toString(36).substring(2, 9);
 
 export const emptyAddress = (): Address => ({
   id: generateId(),
+  idApi: "",
   apelido: "",
   cep: "",
   rua: "",
@@ -12,6 +13,8 @@ export const emptyAddress = (): Address => ({
   cidade: "",
   estado: "",
   pais: "Brasil",
+  tipoLogradouro: "",
+  bairro: "",
   tipo: "casa",
   isCobranca: false,
   isEntrega: false,
@@ -19,10 +22,12 @@ export const emptyAddress = (): Address => ({
 
 export const emptyCard = (): Card => ({
   id: generateId(),
+  idApi: "",
   numero: "",
   nomeImpresso: "",
   apelido: "",
   cvv: "",
+  bandeira: "",
   validade: "",
   isPreferencial: false,
 });
@@ -33,6 +38,8 @@ export const emptyUser = (): UserData => ({
   senha: "",
   cpf: "",
   dataNascimento: "",
+  tipoTelefone: "",
+  confirmarSenha: "",
   telefone: "",
   genero: "",
   enderecos: [emptyAddress()],

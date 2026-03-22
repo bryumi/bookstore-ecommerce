@@ -84,7 +84,7 @@ function AddAddressModal({
       setErrors(errs);
       return;
     }
-    onAdd({ ...form, id: generateId() });
+
     setForm(emptyAddressForm());
     setErrors({});
     onClose();

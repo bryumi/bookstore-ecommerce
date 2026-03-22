@@ -1,80 +1,59 @@
 import { UserData } from "@/types/mock.interface";
-import {
-  profileAddressesSchema,
-  profileCardsSchema,
-  profilePersonalSchema,
-} from "@/validations/RegisterSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FormProvider, useForm } from "react-hook-form";
-import Input from "../Input";
-import { formatCPF, formatPhone } from "@/utils/mask";
-import Select from "../Select";
 import PrimaryBtn from "../Buttons/PrimaryBtn";
-import AutoSaveNote from "../AutoSaveNote";
 import StepAddresses from "./StepAddress";
 import StepCards from "./StepCards";
-import { useStore } from "@/lib/store-context";
-import { useRouter } from "next/navigation";
+
+import StepPersonal from "./StepPersonal";
+import { registerSchema } from "@/validations/RegisterSchema";
+import { useState } from "react";
+import ModalChangePassword from "../Modals/ModalChangePassword";
 
 const ProfileForm = ({
   loggedUser,
-  editSection,
-  setEditSection,
   onSave,
   onLogout,
   isPageProfile = false,
   onCheckout,
+  isEdit,
+  setIsEdit,
 }: {
-  loggedUser: UserData;
-  editSection: "personal" | "addresses" | "cards" | null;
-  setEditSection: (s: "personal" | "addresses" | "cards" | null) => void;
+  loggedUser?: UserData;
   onSave: (user: UserData) => void;
   onLogout: () => void;
   isPageProfile?: boolean;
   onCheckout?: () => void;
+  isEdit: boolean;
+  setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const router = useRouter();
-  const { clearCart } = useStore();
-
-  const personalMethods = useForm<UserData>({
-    resolver: yupResolver(profilePersonalSchema as any),
+  const [modalChangePassword, setModalChangePassword] = useState(false);
+  const methods = useForm<UserData>({
+    resolver: yupResolver(registerSchema),
     defaultValues: loggedUser,
+    // Validate only on submit/blur, not on every keystroke
     mode: "onTouched",
-  });
+    shouldFocusError: true,
+  } as any);
 
-  const addressMethods = useForm<Pick<UserData, "enderecos">>({
-    resolver: yupResolver(profileAddressesSchema as any),
-    defaultValues: { enderecos: loggedUser.enderecos },
-    mode: "onTouched",
-  });
-
-  const cardMethods = useForm<Pick<UserData, "cartoes">>({
-    resolver: yupResolver(profileCardsSchema as any),
-    defaultValues: { cartoes: loggedUser.cartoes },
-    mode: "onTouched",
-  });
-
-  const handleSavePersonal = personalMethods.handleSubmit((data) => {
-    onSave({ ...loggedUser, ...data });
-  });
-
-  const handleSaveAddresses = addressMethods.handleSubmit((data) => {
-    onSave({ ...loggedUser, enderecos: data.enderecos });
-  });
-
-  const handleSaveCards = cardMethods.handleSubmit((data) => {
-    onSave({ ...loggedUser, cartoes: data.cartoes });
-  });
+  const {
+    handleSubmit,
+    formState: { isSubmitting, errors },
+  } = methods;
 
   const handleConfirmPurchase = () => {
     console.log("confirm purchase");
     if (onCheckout) onCheckout();
   };
+
+  const onSubmit = (data: UserData) => {
+    onSave(data);
+  };
   const sections = [
     {
       key: "personal" as const,
       label: "Dados Pessoais",
-      sub: loggedUser.email,
+      sub: loggedUser?.email,
       dot: "bg-burgundy/15 text-burgundy",
       icon: (
         <svg
@@ -95,7 +74,7 @@ const ProfileForm = ({
     {
       key: "addresses" as const,
       label: "Endereços",
-      sub: `${loggedUser.enderecos.length} endereço(s)`,
+      sub: `${loggedUser?.enderecos.length} endereço(s)`,
       dot: "bg-sage/15 text-sage",
       icon: (
         <svg
@@ -122,7 +101,7 @@ const ProfileForm = ({
     {
       key: "cards" as const,
       label: "Cartões de Pagamento",
-      sub: `${loggedUser.cartoes.length} cartão(ões)`,
+      sub: `${loggedUser?.cartoes.length} cartão(ões)`,
       dot: "bg-gold/15 text-gold",
       icon: (
         <svg
@@ -143,187 +122,117 @@ const ProfileForm = ({
   ];
 
   return (
-    <div className="min-h-screen bg-cream p-6">
-      <div className="max-w-2xl mx-auto">
-        <div className="flex items-end justify-between mb-3">
-          <div>
-            <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-gold mb-1">
-              Minha Conta
-            </p>
-            <h2 className="font-display text-3xl text-charcoal font-semibold">
-              Olá, {loggedUser.nome.split(" ")[0]}
-            </h2>
-          </div>
-          <button
-            onClick={onLogout}
-            className="font-sans text-[10px] uppercase tracking-[0.15em] text-charcoal/30 border border-charcoal/12 px-4 py-2 hover:border-burgundy/30 hover:text-burgundy transition-all duration-200 mb-1"
-          >
-            Sair
-          </button>
-        </div>
-
-        <div className="h-px bg-gradient-to-r from-gold/25 via-gold/8 to-transparent mb-8" />
-
-        <div className="space-y-2">
-          {sections.map(({ key, label, sub, dot, icon }) => (
-            <div key={key} className="bg-white border border-charcoal/8">
-              <button
-                type="button"
-                onClick={() => setEditSection(editSection === key ? null : key)}
-                className="w-full flex items-center justify-between px-6 py-5 hover:bg-charcoal/2 transition-colors group"
-              >
-                <div className="flex items-center gap-4">
-                  <div
-                    className={`w-8 h-8 flex items-center justify-center ${dot}`}
-                  >
-                    {icon}
-                  </div>
-                  <div className="text-left">
-                    <p className="font-sans text-sm font-semibold text-charcoal">
-                      {label}
-                    </p>
-                    <p className="font-body text-xs italic text-charcoal/35">
-                      {sub}
-                    </p>
-                  </div>
-                </div>
-                <span
-                  className={`font-sans text-[10px] uppercase tracking-[0.15em] transition-colors
-                  ${editSection === key ? "text-charcoal/25" : "text-burgundy group-hover:text-burgundy/60"}`}
-                >
-                  {editSection === key ? "Fechar" : "Editar"}
-                </span>
-              </button>
-
-              {editSection === key && (
-                <div className="px-6 pb-6 pt-5 border-t border-charcoal/5 space-y-4">
-                  {key === "personal" && (
-                    <FormProvider {...personalMethods}>
-                      <form
-                        onSubmit={handleSavePersonal}
-                        noValidate
-                        className="space-y-4"
-                      >
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="col-span-2">
-                            <Input
-                              label="Nome Completo"
-                              registration={personalMethods.register("nome")}
-                              error={
-                                personalMethods.formState.errors.nome?.message
-                              }
-                            />
-                          </div>
-                          <Input
-                            label="E-mail"
-                            type="email"
-                            registration={personalMethods.register("email")}
-                            error={
-                              personalMethods.formState.errors.email?.message
-                            }
-                          />
-                          <Input
-                            label="Nova Senha"
-                            type="password"
-                            hint="Deixe vazio para não alterar"
-                            registration={personalMethods.register("senha")}
-                            error={
-                              personalMethods.formState.errors.senha?.message
-                            }
-                          />
-                          <Input
-                            label="CPF"
-                            placeholder="000.000.000-00"
-                            registration={personalMethods.register("cpf")}
-                            transform={formatCPF}
-                            error={
-                              personalMethods.formState.errors.cpf?.message
-                            }
-                          />
-                          <Input
-                            label="Telefone"
-                            registration={personalMethods.register("telefone")}
-                            transform={formatPhone}
-                            error={
-                              personalMethods.formState.errors.telefone?.message
-                            }
-                          />
-                          <Input
-                            label="Data de Nascimento"
-                            type="date"
-                            registration={personalMethods.register(
-                              "dataNascimento",
-                            )}
-                            error={
-                              personalMethods.formState.errors.dataNascimento
-                                ?.message
-                            }
-                          />
-                          <Select
-                            label="Gênero"
-                            registration={personalMethods.register("genero")}
-                            error={
-                              personalMethods.formState.errors.genero?.message
-                            }
-                            options={[
-                              { value: "masculino", label: "Masculino" },
-                              { value: "feminino", label: "Feminino" },
-                              { value: "outro", label: "Outro" },
-                              {
-                                value: "nao-informar",
-                                label: "Prefiro não informar",
-                              },
-                            ]}
-                          />
-                        </div>
-                        <PrimaryBtn type="submit">Salvar alterações</PrimaryBtn>
-                        <AutoSaveNote />
-                      </form>
-                    </FormProvider>
-                  )}
-
-                  {key === "addresses" && (
-                    <FormProvider {...addressMethods}>
-                      <form
-                        onSubmit={handleSaveAddresses}
-                        noValidate
-                        className="space-y-4"
-                      >
-                        <StepAddresses />
-                        <PrimaryBtn type="submit">Salvar endereços</PrimaryBtn>
-                        <AutoSaveNote />
-                      </form>
-                    </FormProvider>
-                  )}
-
-                  {key === "cards" && (
-                    <FormProvider {...cardMethods}>
-                      <form
-                        onSubmit={handleSaveCards}
-                        noValidate
-                        className="space-y-4"
-                      >
-                        <StepCards />
-                        <PrimaryBtn type="submit">Salvar cartões</PrimaryBtn>
-                        <AutoSaveNote />
-                      </form>
-                    </FormProvider>
-                  )}
-                </div>
-              )}
+    <>
+      <div className="min-h-screen bg-cream p-6">
+        <div className="max-w-2xl mx-auto">
+          <div className="flex items-end justify-between mb-3">
+            <div>
+              <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-gold mb-1">
+                Minha Conta
+              </p>
+              <h2 className="font-display text-3xl text-charcoal font-semibold">
+                Olá, {loggedUser?.nome?.split(" ")[0]}
+              </h2>
             </div>
-          ))}
-        </div>
-
-        {!isPageProfile && (
-          <div className="mt-6">
-            <PrimaryBtn onClick={handleConfirmPurchase}>
-              Confirmar Compra →
-            </PrimaryBtn>
+            <div className="flex items-end gap-4">
+              <button
+                onClick={onLogout}
+                className="font-sans text-[10px] uppercase tracking-[0.15em]  text-charcoal/30 border border-charcoal/12 px-4 py-2 hover:border-burgundy/30 hover:text-burgundy transition-all duration-200 mb-1"
+              >
+                Sair
+              </button>
+              <button
+                onClick={() => setModalChangePassword(true)}
+                className="font-sans text-[10px] uppercase tracking-[0.15em] bg-burgundy text-yellow-50 border border-charcoal/12 px-4 py-2 hover:border-burgundy/30  hover:bg-burgundy/80 transition-all duration-200 mb-1"
+              >
+                Alterar senha
+              </button>
+            </div>
           </div>
-        )}
+
+          {isEdit ? (
+            <button
+              onClick={() => setIsEdit(false)}
+              className="font-sans text-[10px] uppercase tracking-[0.15em] text-charcoal/30 border border-charcoal/12 px-4 py-2 hover:border-burgundy/30 hover:text-burgundy transition-all duration-200 mb-1"
+            >
+              Cancelar
+            </button>
+          ) : (
+            <div className="h-px bg-gradient-to-r from-gold/25 via-gold/8 to-transparent mb-8" />
+          )}
+
+          <div className="space-y-2">
+            {!isEdit &&
+              sections.map(({ key, label, sub, dot, icon }) => (
+                <div key={key} className="bg-white border border-charcoal/8">
+                  <button
+                    type="button"
+                    className="w-full flex items-center justify-between px-6 py-5 hover:bg-charcoal/2 transition-colors group"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div
+                        className={`w-8 h-8 flex items-center justify-center ${dot}`}
+                      >
+                        {icon}
+                      </div>
+                      <div className="text-left">
+                        <p className="font-sans text-sm font-semibold text-charcoal">
+                          {label}
+                        </p>
+                        <p className="font-body text-xs italic text-charcoal/35">
+                          {sub}
+                        </p>
+                      </div>
+                    </div>
+                    <span
+                      className={`font-sans text-[10px] uppercase tracking-[0.15em] transition-colors
+                  ${!isEdit ? "text-charcoal/25" : "text-burgundy group-hover:text-burgundy/60"}`}
+                      onClick={() => setIsEdit(!isEdit)}
+                    >
+                      Editar
+                    </span>
+                  </button>
+                </div>
+              ))}
+            {isEdit && (
+              <div className="px-6 pb-6 pt-5 border-none">
+                <FormProvider {...methods}>
+                  <form
+                    onSubmit={handleSubmit(onSubmit, (errs) =>
+                      console.log(errs),
+                    )}
+                    noValidate
+                  >
+                    <div className="bg-white border border-charcoal/8 p-8 space-y-6">
+                      <StepPersonal formMode="edit" />
+                      <StepAddresses />
+                      <StepCards />
+                      {/* <StepReview data={watch()} /> */}
+
+                      <div className="pt-5 border-t border-charcoal/6">
+                        <PrimaryBtn type="submit">Salvar ✓</PrimaryBtn>
+                      </div>
+                    </div>
+                  </form>
+                </FormProvider>
+              </div>
+            )}
+          </div>
+
+          {!isPageProfile && (
+            <div className="mt-6">
+              <PrimaryBtn onClick={handleConfirmPurchase}>
+                Confirmar Compra →
+              </PrimaryBtn>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+      <ModalChangePassword
+        open={modalChangePassword}
+        onClose={() => setModalChangePassword(false)}
+      />
+    </>
   );
 };
 

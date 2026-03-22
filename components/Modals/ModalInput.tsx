@@ -9,7 +9,7 @@ const ModalInput = ({
   hint = "",
 }: {
   label: string;
-  value: string;
+  value?: string;
   onChange: (v: string) => void;
   placeholder?: string;
   type?: string;

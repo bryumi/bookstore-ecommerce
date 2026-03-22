@@ -3,6 +3,7 @@ import Toggle from "../Toogle";
 import Input from "../Input";
 import { formatCardNumber, formatValidade, maskCardNumber } from "@/utils/mask";
 import { Controller, useFormContext } from "react-hook-form";
+import Select from "../Select";
 
 const CardForm = ({
   prefix,
@@ -103,6 +104,18 @@ const CardForm = ({
       />
 
       <div className="grid grid-cols-2 gap-3">
+        <Select
+          label="Bandeira"
+          required
+          registration={register(`${prefix}.bandeira`)}
+          error={e.bandeira?.message}
+          options={[
+            { value: "master", label: "Mastercard" },
+            { value: "visa", label: "Visa" },
+            { value: "elo", label: "Elo" },
+            { value: "americanExpress", label: "American Express" },
+          ]}
+        />
         <Input
           label="Validade"
           placeholder="MM/AA"

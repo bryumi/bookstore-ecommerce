@@ -5,14 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function CartPage() {
-  const {
-    cart,
-    updateQuantity,
-    removeFromCart,
-    getCartTotal,
-    createOrder,
-    loggedUser,
-  } = useStore();
+  const { cart, updateQuantity, removeFromCart, getCartTotal, createOrder } =
+    useStore();
   const router = useRouter();
 
   const handleCheckout = () => {

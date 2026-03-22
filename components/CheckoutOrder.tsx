@@ -33,7 +33,7 @@ interface CardPayment {
 }
 
 interface OrderSummaryProps {
-  user: UserData;
+  user?: UserData;
   onConfirm: (order: OrderPayload) => void;
   onUserUpdate?: (updated: UserData) => void;
 }
@@ -42,23 +42,24 @@ export default function OrderSummary({
   onConfirm,
   onUserUpdate,
 }: OrderSummaryProps) {
-  const [user, setUser] = useState<UserData>(initialUser);
+  const [user, setUser] = useState<UserData>();
 
-
-  useEffect(() => {
-    setUser(initialUser);
-  }, [initialUser]);
+  // useEffect(() => {
+  //   setUser(initialUser);
+  // }, [initialUser]);
   const { cart, getCartTotal } = useStore();
   const [addressModalOpen, setAddressModalOpen] = useState(false);
   const [cardModalOpen, setCardModalOpen] = useState(false);
-
   const [selectedAddressId, setSelectedAddressId] = useState<string>(
-    user.enderecos.find((a) => a.isEntrega)?.id ?? user.enderecos[0]?.id ?? "",
+    // pre-select the first delivery address, or first address
+    user?.enderecos.find((a) => a.isEntrega)?.id ??
+      user?.enderecos[0]?.id ??
+      "",
   );
 
   const [cardPayments, setCardPayments] = useState<CardPayment[]>(
-
-    user.cartoes.some((c) => c.isPreferencial)
+    // pre-select preferential card if exists
+    user?.cartoes.some((c) => c.isPreferencial)
       ? [{ cardId: user.cartoes.find((c) => c.isPreferencial)!.id, value: "" }]
       : [],
   );
@@ -73,14 +74,15 @@ export default function OrderSummary({
   );
 
   const handleAddAddress = (address: Address) => {
-    const updated = { ...user, enderecos: [...user.enderecos, address] };
+    if (!user) return;
+    const updated = { ...user, enderecos: [...user?.enderecos, address] };
     persistUser(updated);
 
     setSelectedAddressId(address.id);
   };
 
-
   const handleAddCard = (card: Card) => {
+    if (!user) return;
     const updated = { ...user, cartoes: [...user.cartoes, card] };
     persistUser(updated);
 
@@ -90,7 +92,6 @@ export default function OrderSummary({
   const [error, setError] = useState<string | null>(null);
 
   const total = getCartTotal();
-
 
   const allocatedTotal = useMemo(
     () => cardPayments.reduce((sum, p) => sum + parseValue(p.value), 0),
@@ -103,7 +104,6 @@ export default function OrderSummary({
   );
 
   const isBalanced = Math.abs(allocatedTotal - total) < 0.01;
-
 
   const selectedCardIds = cardPayments.map((p) => p.cardId);
 
@@ -123,7 +123,6 @@ export default function OrderSummary({
   };
 
   const updateValue = (cardId: string, value: string) => {
-
     const clean = value.replace(/[^0-9.,]/g, "").replace(/,/g, ".");
     setCardPayments((prev) =>
       prev.map((p) => (p.cardId === cardId ? { ...p, value: clean } : p)),
@@ -146,7 +145,6 @@ export default function OrderSummary({
     setError(null);
   };
 
-
   const handleConfirm = () => {
     setError(null);
 
@@ -166,7 +164,7 @@ export default function OrderSummary({
     }
     const zeroCard = cardPayments.find((p) => parseValue(p.value) <= 0);
     if (zeroCard) {
-      const card = user.cartoes.find((c) => c.id === zeroCard.cardId);
+      const card = user?.cartoes.find((c) => c.id === zeroCard.cardId);
       setError(
         `O cartão "${card?.apelido || maskCard(card?.numero ?? "")}" não possui valor alocado.`,
       );
@@ -185,10 +183,12 @@ export default function OrderSummary({
 
   if (cart.length === 0) return null;
 
-  const deliveryAddresses = user.enderecos.filter((a) => a.isEntrega);
-  const allAddresses = user.enderecos;
+  const deliveryAddresses = user?.enderecos.filter((a) => a.isEntrega);
+  const allAddresses = user?.enderecos;
   const addressList =
-    deliveryAddresses.length > 0 ? deliveryAddresses : allAddresses;
+    deliveryAddresses && deliveryAddresses?.length > 0
+      ? deliveryAddresses
+      : allAddresses;
 
   return (
     <>
@@ -292,13 +292,13 @@ export default function OrderSummary({
               Endereço de Entrega
             </SectionLabel>
 
-            {addressList.length === 0 ? (
+            {addressList?.length === 0 ? (
               <p className="font-body text-lg italic text-charcoal/40">
                 Nenhum endereço cadastrado.
               </p>
             ) : (
               <div className="space-y-2">
-                {addressList.map((addr) => {
+                {addressList?.map((addr) => {
                   const isSelected = selectedAddressId === addr.id;
                   return (
                     <button
@@ -368,7 +368,6 @@ export default function OrderSummary({
           </div>
         </div>
 
-
         <div className="bg-white border border-charcoal/8">
           <div className="px-6 pt-6 pb-6">
             <SectionLabel
@@ -405,7 +404,7 @@ export default function OrderSummary({
                 Seus cartões
               </p>
               <div className="flex flex-wrap gap-2">
-                {user.cartoes.map((card) => {
+                {user?.cartoes.map((card) => {
                   const alreadyAdded = selectedCardIds.includes(card.id);
                   return (
                     <button
@@ -476,7 +475,7 @@ export default function OrderSummary({
 
                 <div className="space-y-2">
                   {cardPayments.map((payment: any) => {
-                    const card = user.cartoes.find(
+                    const card = user?.cartoes?.find(
                       (c: any) => c.id === payment.cardId,
                     )!;
                     const parsedVal = parseValue(payment.value);
@@ -487,7 +486,6 @@ export default function OrderSummary({
                         key={payment.cardId}
                         className="border border-charcoal/10 p-3 space-y-2"
                       >
-
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <span className="font-sans text-base font-semibold text-charcoal">

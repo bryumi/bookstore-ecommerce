@@ -55,9 +55,6 @@ const Modal = ({
 
         <div className="flex items-start justify-between px-6 pt-5 pb-4 border-b border-charcoal/8 flex-shrink-0">
           <div>
-            <p className="font-sans text-[10px] uppercase tracking-[0.28em] text-gold mb-0.5">
-              Adicionar
-            </p>
             <h2 className="font-display text-xl font-semibold text-charcoal">
               {title}
             </h2>
