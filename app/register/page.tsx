@@ -30,7 +30,7 @@ export default function RegisterPage() {
   const { mutate: mutateCreateUser } = useCreateClient({
     onSuccess: () => {
       showSnackbar("Salvo com sucesso!", "success");
-      router.push("/profile");
+      router.push("/login");
     },
     onError: (error) => {
       showSnackbar("Erro ao salvar!", "error");
@@ -62,10 +62,7 @@ export default function RegisterPage() {
       onSuccess={(user) => {
         console.log("user", user);
         saveUser(user);
-<<<<<<< HEAD
         router.push("/login");
-=======
->>>>>>> 6d69e4a4f6d4acbe06b436ff2803f13158b13047
       }}
     />
   );
