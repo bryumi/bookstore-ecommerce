@@ -9,10 +9,10 @@ import StepPersonal from "./StepPersonal";
 import { registerSchema } from "@/validations/RegisterSchema";
 import { useState } from "react";
 import ModalChangePassword from "../Modals/ModalChangePassword";
-import { useDeleteAccount } from "@/services/clients/deleteAccount";
+import Modal from "../Modals/Modal";
 import { useSnackbar } from "@/hooks/useSnackbar";
-import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 
 const ProfileForm = ({
   loggedUser,
@@ -32,10 +32,11 @@ const ProfileForm = ({
   setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [modalChangePassword, setModalChangePassword] = useState(false);
+  const [modalDeleteAccount, setModalDeleteAccount] = useState(false);
   const methods = useForm<UserData>({
     resolver: yupResolver(registerSchema),
     defaultValues: loggedUser,
-    // Validate only on submit/blur, not on every keystroke
+
     mode: "onTouched",
     shouldFocusError: true,
   } as any);
@@ -52,20 +53,11 @@ const ProfileForm = ({
     console.log("confirm purchase");
     if (onCheckout) onCheckout();
   };
-  const { mutate: mutateDeleteAccount } = useDeleteAccount({
-    onSuccess: () => {
-      showSnackbar("Conta deletada!", "success");
-      logout();
-      router.push("/");
-    },
-    onError(error) {
-      showSnackbar(error.response.data.error, "error");
-      console.log(error);
-    },
-  });
-  const handleDeleteAccount = () => {
-    mutateDeleteAccount(user?.id);
+
+  const handleDelete = () => {
+    console.log("Deletando usuário");
   };
+
   const onSubmit = (data: UserData) => {
     onSave(data);
   };
@@ -161,22 +153,18 @@ const ProfileForm = ({
               >
                 Sair
               </button>
-              {isPageProfile && (
-                <button
-                  onClick={() => setModalChangePassword(true)}
-                  className="font-sans text-[10px] uppercase tracking-[0.15em] bg-burgundy text-yellow-50 border border-charcoal/12 px-4 py-2 hover:border-burgundy/30  hover:bg-burgundy/80 transition-all duration-200 mb-1"
-                >
-                  Alterar senha
-                </button>
-              )}
-              {isPageProfile && (
-                <button
-                  onClick={handleDeleteAccount}
-                  className="font-sans text-[10px] uppercase tracking-[0.15em]  text-charcoal/30 border border-charcoal/12 px-4 py-2 hover:border-burgundy/30 hover:text-burgundy transition-all duration-200 mb-1"
-                >
-                  Excluir conta
-                </button>
-              )}
+              <button
+                onClick={() => setModalChangePassword(true)}
+                className="font-sans text-[10px] uppercase tracking-[0.15em] bg-burgundy text-yellow-50 border border-charcoal/12 px-4 py-2 hover:border-burgundy/30  hover:bg-burgundy/80 transition-all duration-200 mb-1"
+              >
+                Alterar senha
+              </button>
+              <button
+                onClick={() => setModalDeleteAccount(true)}
+                className="font-sans text-[10px] uppercase tracking-[0.15em] bg-burgundy text-yellow-50 border border-charcoal/12 px-4 py-2 hover:border-burgundy/30  hover:bg-burgundy/80 transition-all duration-200 mb-1"
+              >
+                Excluir conta
+              </button>
             </div>
           </div>
 
@@ -262,6 +250,28 @@ const ProfileForm = ({
         open={modalChangePassword}
         onClose={() => setModalChangePassword(false)}
       />
+      <Modal
+        open={modalDeleteAccount}
+        title="Tem certeza que deseja excluir sua conta?"
+        subtitle="Essa ação não poderá ser desfeita"
+        onClose={() => setModalDeleteAccount(false)}
+      >
+        <div className="flex justify-end gap-3">
+          <button
+            onClick={() => setModalDeleteAccount(false)}
+            className="px-4 py-2 border border-charcoal"
+          >
+            Cancelar
+          </button>
+
+          <button
+            onClick={handleDelete}
+            className="px-4 py-2 bg-burgundy text-white"
+          >
+            Excluir
+          </button>
+        </div>
+      </Modal>
     </>
   );
 };

@@ -30,7 +30,7 @@ export default function RegisterPage() {
   const { mutate: mutateCreateUser } = useCreateClient({
     onSuccess: () => {
       showSnackbar("Salvo com sucesso!", "success");
-      router.push("/profile");
+      router.push("/login");
     },
     onError: (error) => {
       showSnackbar("Erro ao salvar!", "error");
@@ -47,7 +47,6 @@ export default function RegisterPage() {
     localStorage.removeItem("bookstore-user");
     // setLoggedUser(null);
   };
-
 
   return (
     <RegisterForm

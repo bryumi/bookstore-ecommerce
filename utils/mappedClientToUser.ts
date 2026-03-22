@@ -17,12 +17,11 @@ export function mapClientToUserData(apiClient: any): UserData {
   };
 }
 
-// mapper de endereço
 function mapAddress(address: any): Address {
   return {
     id: address.id,
     idApi: address.id,
-    apelido: address.addressNickname, // não vem da API
+    apelido: address.addressNickname,
     bairro: address.neighborhood,
     cep: address.cep,
     rua: address.street,
@@ -38,7 +37,7 @@ function mapAddress(address: any): Address {
   };
 }
 
-// mapper de cartão
+
 function mapCard(card: any): Card {
   return {
     id: card.id,

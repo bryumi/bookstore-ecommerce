@@ -19,6 +19,8 @@ export const useCreateClient = ({ onSuccess, onError }: Props) => {
         phoneNumber: form.telefone,
         phoneType: form.tipoTelefone,
         email: form.email,
+        password: form.senha,
+        confirmPassword: form.confirmarSenha,
         addresses: form.enderecos.map((address) => ({
           typeResidence: address.tipo,
           addressNickname: address.apelido,

@@ -11,7 +11,7 @@ const Modal = ({
   onClose: () => void;
   title: string;
   subtitle?: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }) => {
 
   useEffect(() => {
@@ -35,7 +35,6 @@ const Modal = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6">
-      {/* Backdrop */}
       <div
         className="absolute inset-0 bg-charcoal/40 backdrop-blur-sm"
         onClick={onClose}
@@ -48,7 +47,6 @@ const Modal = ({
           max-h-[92dvh] flex flex-col"
         style={{ animation: "slideUp 0.25s cubic-bezier(0.16,1,0.3,1)" }}
       >
-        {/* Drag handle (mobile) */}
         <div className="sm:hidden flex justify-center pt-3 pb-1">
           <div className="w-8 h-1 bg-charcoal/15 rounded-full" />
         </div>
@@ -59,7 +57,7 @@ const Modal = ({
               {title}
             </h2>
             {subtitle && (
-              <p className="font-body text-xs italic text-charcoal/40 mt-0.5">
+              <p className="font-body text-base italic text-charcoal/80 mt-0.5">
                 {subtitle}
               </p>
             )}
@@ -67,10 +65,10 @@ const Modal = ({
           <button
             type="button"
             onClick={onClose}
-            className="text-charcoal/25 hover:text-charcoal transition-colors mt-0.5 p-1"
+            className="text-charcoal hover:text-charcoal transition-colors mt-0.5 p-1"
           >
             <svg
-              className="w-4 h-4"
+              className="w-5 h-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

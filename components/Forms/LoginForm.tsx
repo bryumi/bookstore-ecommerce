@@ -29,7 +29,7 @@ const LoginForm = ({
   };
 
   return (
-    <div className="min-h-screen bg-cream flex items-start justify-center p-6">
+    <div className="min-h-screen bg-cream flex justify-center p-6">
       <div className="w-1/2">
         <button
           onClick={onBack}
@@ -81,11 +81,11 @@ const LoginForm = ({
           <div className="flex-1 h-px bg-charcoal/8" />
         </div>
 
-        <p className="text-center font-body text-sm text-charcoal/40">
+        <p className="text-center font-body text-base text-charcoal/40">
           Não tem conta?{" "}
           <button
             onClick={onRegister}
-            className="text-burgundy hover:text-burgundy/70 font-medium transition-colors"
+            className="text-burgundy text-base hover:text-burgundy/70 font-medium transition-colors"
           >
             Cadastre-se
           </button>
