@@ -50,7 +50,7 @@ export default function RegisterPage() {
       }
       onSuccess={(user) => {
         saveUser(user);
-        router.push("/profile");
+        router.push("/login");
       }}
     />
   );
