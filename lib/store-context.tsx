@@ -1,7 +1,10 @@
 "use client";
 
+import { useAuth } from "@/hooks/useAuth";
 import { useGetBooksData } from "@/services/books/getBooksData";
+import { useGetCoupons } from "@/services/clients/getCoupons";
 import { IBook } from "@/types/books.interface";
+import { ICoupon } from "@/types/coupons.interface";
 import { UserData } from "@/types/mock.interface";
 import { IOrder } from "@/types/orders.interface";
 import { emptyUser } from "@/utils/mask";
@@ -24,6 +27,7 @@ interface StoreContextType {
   getCartCount: () => number;
   couponCode: string;
   setCouponCode: React.Dispatch<React.SetStateAction<string>>;
+  userCoupons: ICoupon[];
 }
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
@@ -42,6 +46,10 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   const [orders, setOrders] = useState<IOrder[]>();
   const [userData, setUserData] = useState<UserData>(emptyUser());
   const [books, setBooks] = useState<IBook[]>([]);
+  const [userCoupons, setUserCoupons] = useState<ICoupon[]>([]);
+
+  const { user } = useAuth();
+  const { data: coupons } = useGetCoupons(user?.id ?? "");
 
   const { data } = useGetBooksData();
 
@@ -50,6 +58,12 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
       setBooks(data.books);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (coupons) {
+      setUserCoupons(coupons.cupons);
+    }
+  }, [coupons]);
   // Load cart and orders from localStorage
   // useEffect(() => {
   //   const savedCart = localStorage.getItem("bookstore-cart");
@@ -155,6 +169,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
         getCartCount,
         couponCode,
         setCouponCode,
+        userCoupons,
       }}
     >
       {children}

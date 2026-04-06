@@ -51,7 +51,7 @@ export default function OrderSummary({
   // useEffect(() => {
   //   setUser(initialUser);
   // }, [initialUser]);
-  const { cart, getCartTotal } = useStore();
+  const { cart, getCartTotal, couponCode, userCoupons } = useStore();
   const [addressModalOpen, setAddressModalOpen] = useState(false);
   const [cardModalOpen, setCardModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -97,11 +97,12 @@ export default function OrderSummary({
 
   const [error, setError] = useState<string | null>(null);
 
-  const total = getCartTotal();
+  const hasCoupons = userCoupons.find((c) => c.cupomCode === couponCode);
+  const total = getCartTotal() - (Number(hasCoupons?.cupomValue) ?? 0);
 
   const allocatedTotal = useMemo(
     () => cardPayments.reduce((sum, p) => sum + parseValue(p.value), 0),
-    [cardPayments],
+    [cardPayments, total],
   );
 
   const remaining = useMemo(
@@ -169,7 +170,7 @@ export default function OrderSummary({
       return;
     }
     const zeroCard = cardPayments.find((p) => parseValue(p.value) <= 0);
-    if (zeroCard) {
+    if (zeroCard && total > 0) {
       const card = user?.cartoes.find((c) => c.id === zeroCard.cardId);
       setError(
         `O cartão "${card?.apelido || maskCard(card?.numero ?? "")}" não possui valor alocado.`,
@@ -191,11 +192,12 @@ export default function OrderSummary({
         })),
         payments: cardPayments.map((p) => ({
           paymentMethod: "credit_card",
-          paymentValue: parseValue(p.value),
+          paymentValue: total === 0 ? getCartTotal() : parseValue(p.value),
           paymentStatus: "approved",
           creditCard: {
             id: p.cardId,
           },
+          cupomCode: couponCode,
         })),
         deliveryId: {
           id: uuidv4(),
@@ -203,7 +205,7 @@ export default function OrderSummary({
           freightType: "delivery",
         },
         orderDate: new Date().toISOString(),
-        totalPrice: total,
+        totalPrice: total === 0 ? getCartTotal() : total,
         freightValue: "0.00",
       });
       onConfirm({
@@ -284,6 +286,15 @@ export default function OrderSummary({
               <span>Frete</span>
               <span className="text-sage font-medium">Grátis</span>
             </div>
+            {hasCoupons && (
+              <div className="flex justify-between font-body text-lg text-charcoal/50">
+                <span>Cupom</span>
+                <span className="text-red-800 font-bold">
+                  - R${" "}
+                  {Number(hasCoupons.cupomValue).toFixed(2).replace(".", ",")}
+                </span>
+              </div>
+            )}
             <div className="flex items-center gap-3 my-3">
               <div className="flex-1 h-px bg-charcoal/8" />
               <span className="text-gold/40 text-[10px]">✦</span>
@@ -294,7 +305,7 @@ export default function OrderSummary({
                 Total
               </span>
               <span className="font-display text-2xl font-bold text-charcoal">
-                R$ {Number(total).toFixed(2).replace(".", ",")}
+                R$ {total.toFixed(2).replace(".", ",")}
               </span>
             </div>
           </div>
