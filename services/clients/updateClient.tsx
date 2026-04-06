@@ -19,8 +19,6 @@ export const useUpdateClient = ({ onSuccess, onError }: Props) => {
         phoneNumber: form.telefone,
         phoneType: form.tipoTelefone,
         email: form.email,
-        password: form.senha,
-        confirmPassword: form.confirmarSenha,
         addresses: form.enderecos.map((address) => ({
           id: address.idApi !== "" ? address.idApi : undefined,
           typeResidence: address.tipo,
