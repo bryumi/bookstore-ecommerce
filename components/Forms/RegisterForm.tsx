@@ -13,9 +13,6 @@ const RegisterForm = ({
   onBack,
   onSuccess,
 }: {
-  stepIndex: number;
-  registerStep: RegisterStep;
-  setRegisterStep: (s: RegisterStep) => void;
   onBack: () => void;
   onSuccess: (user: UserData) => void;
 }) => {

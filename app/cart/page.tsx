@@ -1,12 +1,19 @@
 "use client";
 
+import { booksImage } from "@/data/mockProducts";
 import { useStore } from "@/lib/store-context";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function CartPage() {
-  const { cart, updateQuantity, removeFromCart, getCartTotal, createOrder } =
-    useStore();
+  const {
+    cart,
+    updateQuantity,
+    removeFromCart,
+    getCartTotal,
+    couponCode,
+    setCouponCode,
+  } = useStore();
   const router = useRouter();
 
   const handleCheckout = () => {
@@ -67,7 +74,7 @@ export default function CartPage() {
                 <div className="flex flex-col sm:flex-row gap-6">
                   <div className="w-full sm:w-32 h-48 sm:h-auto flex-shrink-0">
                     <img
-                      src={item.image}
+                      src={booksImage[index]}
                       alt={item.title}
                       className="w-full h-full object-cover rounded-lg"
                     />
@@ -134,10 +141,11 @@ export default function CartPage() {
 
                       <div className="text-right">
                         <p className="font-display text-2xl font-bold text-burgundy">
-                          R$ {(item.price * item.quantity).toFixed(2)}
+                          R$ {Number(item.price).toFixed(2).replace(".", ",")}
                         </p>
                         <p className="text-xs text-charcoal/50 font-sans">
-                          R$ {item.price.toFixed(2)} cada
+                          R$ {Number(item.price).toFixed(2).replace(".", ",")}{" "}
+                          cada
                         </p>
                       </div>
                     </div>
@@ -181,6 +189,8 @@ export default function CartPage() {
                   type="text"
                   placeholder="Digite seu cupom de troca"
                   className="border border-charcoal rounded-sm w-1/3 mb-2 mt-2 p-2"
+                  value={couponCode}
+                  onChange={(e) => setCouponCode(e.target.value)}
                 />
               </div>
 

@@ -1,42 +1,29 @@
 "use client";
 
-import { mockOrder } from "@/data/mockOrder";
-import { books } from "@/data/mockProducts";
-import { Book, UserData } from "@/types/mock.interface";
+import { useGetBooksData } from "@/services/books/getBooksData";
+import { IBook } from "@/types/books.interface";
+import { UserData } from "@/types/mock.interface";
+import { IOrder } from "@/types/orders.interface";
 import { emptyUser } from "@/utils/mask";
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  use,
-} from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
-interface CartItem extends Book {
+interface CartItem extends IBook {
   quantity: number;
 }
 
-export interface Order {
-  id: string;
-  date: string;
-  items: CartItem[];
-  total: number;
-  status: "processing" | "shipped" | "delivered";
-}
-
 interface StoreContextType {
-  books: Book[];
+  books: IBook[];
   cart: CartItem[];
-  orders: Order[];
   userData: UserData;
   setUserData: React.Dispatch<React.SetStateAction<UserData>>;
-  addToCart: (book: Book) => void;
-  removeFromCart: (bookId: number) => void;
-  updateQuantity: (bookId: number, quantity: number) => void;
+  addToCart: (book: IBook) => void;
+  removeFromCart: (bookId: string) => void;
+  updateQuantity: (bookId: string, quantity: number) => void;
   clearCart: () => void;
-  createOrder: () => void;
   getCartTotal: () => number;
   getCartCount: () => number;
+  couponCode: string;
+  setCouponCode: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
@@ -44,23 +31,39 @@ const StoreContext = createContext<StoreContextType | undefined>(undefined);
 export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [orders, setOrders] = useState<Order[]>([mockOrder]);
+  const [couponCode, setCouponCode] = useState("");
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    if (typeof window !== "undefined") {
+      const savedCart = localStorage.getItem("bookstore-cart");
+      return savedCart ? JSON.parse(savedCart) : [];
+    }
+    return [];
+  });
+  const [orders, setOrders] = useState<IOrder[]>();
   const [userData, setUserData] = useState<UserData>(emptyUser());
-  // Load cart and orders from localStorage
-  useEffect(() => {
-    const savedCart = localStorage.getItem("bookstore-cart");
-    const savedOrders = localStorage.getItem("bookstore-orders");
-    const savedUser = localStorage.getItem("bookstore-user");
+  const [books, setBooks] = useState<IBook[]>([]);
 
-    if (savedCart) {
-      setCart(JSON.parse(savedCart));
+  const { data } = useGetBooksData();
+
+  useEffect(() => {
+    if (data) {
+      setBooks(data.books);
     }
-    if (savedOrders) {
-      setOrders(JSON.parse(savedOrders));
-      console.log("Loaded orders from localStorage:", JSON.parse(savedOrders));
-    }
-  }, []);
+  }, [data]);
+  // Load cart and orders from localStorage
+  // useEffect(() => {
+  //   const savedCart = localStorage.getItem("bookstore-cart");
+  //   const savedOrders = localStorage.getItem("bookstore-orders");
+  //   const savedUser = localStorage.getItem("bookstore-user");
+
+  //   if (savedCart) {
+  //     setCart(JSON.parse(savedCart));
+  //   }
+  //   if (savedOrders) {
+  //     setOrders(JSON.parse(savedOrders));
+  //     console.log("Loaded orders from localStorage:", JSON.parse(savedOrders));
+  //   }
+  // }, []);
 
   // Save cart to localStorage
   useEffect(() => {
@@ -76,7 +79,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
   //   localStorage.setItem("bookstore-user", JSON.stringify(loggedUser));
   // }, [loggedUser]);
 
-  const addToCart = (book: Book) => {
+  const addToCart = (book: IBook) => {
     setCart((prevCart) => {
       const existingItem = prevCart.find((item) => item.id === book.id);
 
@@ -90,11 +93,11 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   };
 
-  const removeFromCart = (bookId: number) => {
+  const removeFromCart = (bookId: string) => {
     setCart((prevCart) => prevCart.filter((item) => item.id !== bookId));
   };
 
-  const updateQuantity = (bookId: number, quantity: number) => {
+  const updateQuantity = (bookId: string, quantity: number) => {
     if (quantity <= 0) {
       removeFromCart(bookId);
       return;
@@ -111,23 +114,26 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
     setCart([]);
   };
 
-  const createOrder = () => {
-    if (cart.length === 0) return;
+  // const createOrder = () => {
+  //   if (cart.length === 0) return;
 
-    const newOrder: Order = {
-      id: `ORD-${Date.now()}`,
-      date: new Date().toISOString(),
-      items: [...cart],
-      total: getCartTotal(),
-      status: "processing",
-    };
+  //   const newOrder: Order = {
+  //     id: `ORD-${Date.now()}`,
+  //     date: new Date().toISOString(),
+  //     items: [...cart],
+  //     total: getCartTotal(),
+  //     status: "processing",
+  //   };
 
-    setOrders((prevOrders) => [newOrder, ...prevOrders]);
-    clearCart();
-  };
+  //   setOrders((prevOrders) => [newOrder, ...prevOrders]);
+  //   clearCart();
+  // };
 
   const getCartTotal = () => {
-    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+    return cart.reduce(
+      (total, item) => total + Number(item.price) * item.quantity,
+      0,
+    );
   };
 
   const getCartCount = () => {
@@ -139,16 +145,16 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
       value={{
         books,
         cart,
-        orders,
         userData,
         setUserData,
         addToCart,
         removeFromCart,
         updateQuantity,
         clearCart,
-        createOrder,
         getCartTotal,
         getCartCount,
+        couponCode,
+        setCouponCode,
       }}
     >
       {children}

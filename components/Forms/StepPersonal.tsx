@@ -62,12 +62,15 @@ const StepPersonal = ({
           transform={maskCPF}
           error={e.cpf?.message}
         />
-        <Input
+        <Select
           label="Tipo de Telefone"
-          placeholder="residencial, comercial, celular"
           required
           registration={register("tipoTelefone")}
           error={e.tipoTelefone?.message}
+          options={[
+            { value: "Celular", label: "Celular" },
+            { value: "Fixo", label: "Fixo" },
+          ]}
         />
         <Input
           label="Telefone"

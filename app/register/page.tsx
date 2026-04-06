@@ -21,12 +21,6 @@ export default function RegisterPage() {
   const router = useRouter();
   const { showSnackbar } = useSnackbar();
   const stepIndex = steps.findIndex((s) => s.key === registerStep);
-  // useEffect(() => {
-  //   const stored = localStorage.getItem("bookstore-user");
-  //   if (stored && stored !== "null") {
-  //     setLoggedUser(JSON.parse(stored));
-  //   }
-  // }, []);
   const { mutate: mutateCreateUser } = useCreateClient({
     onSuccess: () => {
       showSnackbar("Salvo com sucesso!", "success");
@@ -50,14 +44,7 @@ export default function RegisterPage() {
 
   return (
     <RegisterForm
-      stepIndex={stepIndex}
-      registerStep={registerStep}
-      setRegisterStep={setRegisterStep}
-      onBack={() =>
-        stepIndex === 0
-          ? router.back()
-          : setRegisterStep(steps[stepIndex - 1].key)
-      }
+      onBack={() => router.back()}
       onSuccess={(user) => {
         console.log("user", user);
         saveUser(user);

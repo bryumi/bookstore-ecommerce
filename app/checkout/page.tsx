@@ -5,8 +5,15 @@ import OrderSummary from "@/components/CheckoutOrder";
 import LoginForm from "@/components/Forms/LoginForm";
 import ProfileForm from "@/components/Forms/ProfileForm";
 import RegisterForm from "@/components/Forms/RegisterForm";
+import { useAuth } from "@/hooks/useAuth";
+import { useSnackbar } from "@/hooks/useSnackbar";
 import { useStore } from "@/lib/store-context";
+import api from "@/services/api/api";
+import { useCreateClient } from "@/services/clients/createClient";
+import { useGetClientData } from "@/services/clients/getClientData";
 import { UserData } from "@/types/mock.interface";
+import { localStorageKeys } from "@/utils/localStorageKeys";
+import { mapClientToUserData } from "@/utils/mappedClientToUser";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -21,28 +28,66 @@ const steps: { key: RegisterStep; label: string }[] = [
 ];
 
 export default function CheckoutForm() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [mode, setMode] = useState<FormMode>("choose");
-  const [registerStep, setRegisterStep] = useState<RegisterStep>("personal");
   const [isEdit, setIsEdit] = useState(false);
+  const [userSaved, setUserSaved] = useState<UserData | undefined>(undefined);
   const router = useRouter();
-  const stepIndex = steps.findIndex((s) => s.key === registerStep);
   const { clearCart } = useStore();
+  const { user, setUser } = useAuth();
+  const { data: clientData, isLoading } = useGetClientData(user?.id ?? "");
   useEffect(() => {
-    const stored = localStorage.getItem("bookstore-user");
+    const stored = localStorage.getItem(localStorageKeys.user);
     if (stored && stored !== "null") {
+      const loggedUser = clientData
+        ? mapClientToUserData(clientData.client)
+        : undefined;
+
+      setUserSaved(loggedUser);
       setMode("profile");
     }
-  }, []);
-
-  const saveUser = (user: UserData) => {
-    localStorage.setItem("bookstore-user", JSON.stringify(user));
-  };
+  }, [clientData]);
 
   const handleLogout = () => {
     localStorage.removeItem("bookstore-user");
     setMode("choose");
   };
-
+  const { showSnackbar } = useSnackbar();
+  const { mutate: mutateCreateUser } = useCreateClient({
+    onSuccess: () => {
+      showSnackbar("Salvo com sucesso!", "success");
+      handleLoginUser();
+    },
+    onError: (error) => {
+      showSnackbar("Erro ao salvar!", "error");
+      console.log(error);
+    },
+  });
+  const saveUser = (user: UserData) => {
+    // localStorage.setItem("bookstore-user", JSON.stringify(user));
+    // setLoggedUser(user);
+    setUserSaved(user);
+    mutateCreateUser(user);
+  };
+  const handleLoginUser = async () => {
+    try {
+      if (!userSaved) return;
+      setIsSubmitting(true);
+      const { data } = await api.post("/login", {
+        email: userSaved.email,
+        password: userSaved.senha,
+      });
+      setUser(data.user);
+      setUserSaved(mapClientToUserData(data.user));
+      localStorage.setItem(localStorageKeys.accessToken, data.token);
+      localStorage.setItem(localStorageKeys.user, JSON.stringify(data.user));
+      setMode("profile");
+    } catch (error) {
+      showSnackbar("Email ou senha incorretos.", "error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   if (mode === "choose")
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center p-6">
@@ -102,14 +147,7 @@ export default function CheckoutForm() {
   if (mode === "register")
     return (
       <RegisterForm
-        stepIndex={stepIndex}
-        registerStep={registerStep}
-        setRegisterStep={setRegisterStep}
-        onBack={() =>
-          stepIndex === 0
-            ? setMode("choose")
-            : setRegisterStep(steps[stepIndex - 1].key)
-        }
+        onBack={() => setMode("choose")}
         onSuccess={(user) => {
           saveUser(user);
           setMode("profile");
@@ -121,19 +159,20 @@ export default function CheckoutForm() {
   if (mode === "profile")
     return (
       <ProfileForm
+        loggedUser={userSaved}
         onSave={saveUser}
         onLogout={handleLogout}
         setIsEdit={setIsEdit}
         isEdit={isEdit}
         onCheckout={() => {
           setMode("checkout");
-          console.log("checkout");
         }}
       />
     );
-  if (mode === "checkout")
+  if (mode === "checkout" && userSaved)
     return (
       <OrderSummary
+        user={userSaved}
         onConfirm={() => {
           alert("Compra confirmada! Obrigado por comprar conosco.");
           router.push("/orders");

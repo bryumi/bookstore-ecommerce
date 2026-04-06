@@ -4,6 +4,10 @@ import { formatBRL, maskCard, parseValue } from "@/utils/mask";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import AddAddressModal from "./Modals/AddressModal";
 import AddCardModal from "./Modals/ModalAddCard";
+import { booksImage } from "@/data/mockProducts";
+import { useSnackbar } from "@/hooks/useSnackbar";
+import api from "@/services/api/api";
+import { v4 as uuidv4 } from "uuid";
 
 const SectionLabel = ({
   children,
@@ -42,7 +46,7 @@ export default function OrderSummary({
   onConfirm,
   onUserUpdate,
 }: OrderSummaryProps) {
-  const [user, setUser] = useState<UserData>();
+  const [user, setUser] = useState<UserData>(initialUser ?? ({} as UserData));
 
   // useEffect(() => {
   //   setUser(initialUser);
@@ -50,6 +54,8 @@ export default function OrderSummary({
   const { cart, getCartTotal } = useStore();
   const [addressModalOpen, setAddressModalOpen] = useState(false);
   const [cardModalOpen, setCardModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { showSnackbar } = useSnackbar();
   const [selectedAddressId, setSelectedAddressId] = useState<string>(
     // pre-select the first delivery address, or first address
     user?.enderecos.find((a) => a.isEntrega)?.id ??
@@ -145,7 +151,7 @@ export default function OrderSummary({
     setError(null);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     setError(null);
 
     if (!selectedAddressId) {
@@ -170,25 +176,58 @@ export default function OrderSummary({
       );
       return;
     }
-
-    onConfirm({
-      enderecoId: selectedAddressId,
-      pagamentos: cardPayments.map((p) => ({
-        cardId: p.cardId,
-        valor: parseValue(p.value),
-      })),
-      total,
-    });
+    try {
+      setIsSubmitting(true);
+      await api.post("/orders", {
+        clientId: {
+          id: user.id,
+          name: user.nome,
+        },
+        orderItems: cart.map((item) => ({
+          bookId: item.id,
+          quantity: item.quantity,
+          unitaryValue: item.price,
+          totalItemValue: Number(item.price) * item.quantity,
+        })),
+        payments: cardPayments.map((p) => ({
+          paymentMethod: "credit_card",
+          paymentValue: parseValue(p.value),
+          paymentStatus: "approved",
+          creditCard: {
+            id: p.cardId,
+          },
+        })),
+        deliveryId: {
+          id: uuidv4(),
+          freightValue: "0.00",
+          freightType: "delivery",
+        },
+        orderDate: new Date().toISOString(),
+        totalPrice: total,
+        freightValue: "0.00",
+      });
+      onConfirm({
+        enderecoId: selectedAddressId,
+        pagamentos: cardPayments.map((p) => ({
+          cardId: p.cardId,
+          valor: parseValue(p.value),
+        })),
+        total,
+      });
+    } catch (e) {
+      showSnackbar("Erro ao salvar!", "error");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (cart.length === 0) return null;
 
-  const deliveryAddresses = user?.enderecos.filter((a) => a.isEntrega);
+  const deliveryAddresses = user?.enderecos?.filter((a) => a.isEntrega);
   const allAddresses = user?.enderecos;
-  const addressList =
-    deliveryAddresses && deliveryAddresses?.length > 0
-      ? deliveryAddresses
-      : allAddresses;
+  const addressList = deliveryAddresses?.length
+    ? deliveryAddresses
+    : allAddresses;
 
   return (
     <>
@@ -209,11 +248,11 @@ export default function OrderSummary({
           </div>
 
           <div className="divide-y divide-charcoal/5">
-            {cart.map((item) => (
+            {cart.map((item, index) => (
               <div key={item.id} className="flex items-center gap-4 px-6 py-4">
                 <div className="w-20 h-20 overflow-hidden flex-shrink-0 shadow-sm">
                   <img
-                    src={item.image}
+                    src={booksImage[index]}
                     alt={item.title}
                     className="w-full h-full object-cover"
                   />
@@ -230,7 +269,7 @@ export default function OrderSummary({
                   </p>
                 </div>
                 <p className="font-display text-lg font-semibold text-charcoal flex-shrink-0">
-                  {formatBRL(item.price * item.quantity)}
+                  R$ {Number(item.price).toFixed(2).replace(".", ",")}
                 </p>
               </div>
             ))}
@@ -239,7 +278,7 @@ export default function OrderSummary({
           <div className="px-6 pt-4 pb-6 space-y-2 border-t border-charcoal/5 mt-2">
             <div className="flex justify-between font-body text-lg text-charcoal/50">
               <span>Subtotal</span>
-              <span>{formatBRL(total)}</span>
+              <span>R$ {Number(total).toFixed(2).replace(".", ",")}</span>
             </div>
             <div className="flex justify-between font-body text-lg text-charcoal/50">
               <span>Frete</span>
@@ -255,7 +294,7 @@ export default function OrderSummary({
                 Total
               </span>
               <span className="font-display text-2xl font-bold text-charcoal">
-                {formatBRL(total)}
+                R$ {Number(total).toFixed(2).replace(".", ",")}
               </span>
             </div>
           </div>

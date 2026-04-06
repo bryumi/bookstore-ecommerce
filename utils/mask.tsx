@@ -33,6 +33,7 @@ export const emptyCard = (): Card => ({
 });
 
 export const emptyUser = (): UserData => ({
+  id: "",
   nome: "",
   email: "",
   senha: "",

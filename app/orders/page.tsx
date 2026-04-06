@@ -1,18 +1,48 @@
 "use client";
 
+import { booksImage } from "@/data/mockProducts";
+import { useAuth } from "@/hooks/useAuth";
+import { useSnackbar } from "@/hooks/useSnackbar";
 import { useStore } from "@/lib/store-context";
+import { useGetOrdersClient } from "@/services/clients/getOrdersClient";
+import { useRequestExchange } from "@/services/clients/requestExchange";
+import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 
 export default function OrdersPage() {
-  const { orders } = useStore();
+  const { user } = useAuth();
+  const { data } = useGetOrdersClient(user.id);
+  const { books } = useStore();
 
+  const { showSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
+  const { mutate: mutateRequestExchange } = useRequestExchange({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["get-orders-client", user.id],
+      });
+    },
+    onError: (error) => {
+      showSnackbar((error as any).response.data.error as string, "error");
+    },
+  });
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "processing":
+      case "inProcessing":
         return "bg-gold/20 text-gold border-gold";
-      case "shipped":
-        return "bg-blue-500/20 text-blue-600 border-blue-500";
+      case "approved":
+        return "bg-green-500/20 text-green-600 border-green-500";
+      case "failed":
+        return "bg-red-500/20 text-red-600 border-red-500";
+      case "inTransportation":
+        return "bg-blue-500/20 text-blue-500 border-blue-500";
       case "delivered":
+        return "bg-sage/20 text-sage border-sage";
+      case "InExchange":
+        return "bg-white-500/20 text-white-600 border-white-500";
+      case "exchangeApproved":
+        return "bg-green-500/20 text-green-500 border-green-500";
+      case "exchanged":
         return "bg-sage/20 text-sage border-sage";
       default:
         return "bg-charcoal/20 text-charcoal border-charcoal";
@@ -21,10 +51,20 @@ export default function OrdersPage() {
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case "processing":
+      case "inProcessing":
         return "Em Processamento";
-      case "shipped":
+      case "approved":
+        return "Aprovado";
+      case "failed":
+        return "Rejeitado";
+      case "inTransportation":
         return "Em Trânsito";
+      case "InExchange":
+        return "Em Troca";
+      case "exchangeApproved":
+        return "Troca Aprovada";
+      case "exchanged":
+        return "Troca Concluida";
       case "delivered":
         return "Entregue";
       default:
@@ -43,7 +83,7 @@ export default function OrdersPage() {
     });
   };
 
-  if (orders.length === 0) {
+  if (data?.length === 0) {
     return (
       <div className="min-h-screen bg-cream">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -89,7 +129,7 @@ export default function OrdersPage() {
         </div>
 
         <div className="space-y-6">
-          {orders.map((order, index) => (
+          {data?.map((order, index) => (
             <div
               key={order.id}
               className="bg-white rounded-lg shadow-md overflow-hidden animate-slide-in"
@@ -107,10 +147,10 @@ export default function OrdersPage() {
                   </div>
                   <div className="flex flex-col sm:items-end gap-2">
                     <p className="font-sans text-sm text-cream/80">
-                      {formatDate(order.date)}
+                      {formatDate(order.orderDate)}
                     </p>
                     <span
-                      className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-sans font-medium border ${getStatusColor(order.status)}`}
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-xl font-sans font-medium border ${getStatusColor(order.status)}`}
                     >
                       {getStatusText(order.status)}
                     </span>
@@ -120,29 +160,32 @@ export default function OrdersPage() {
 
               <div className="p-6">
                 <div className="space-y-4 mb-6">
-                  {order.items.map((item) => (
+                  {order.orderItems.map((item, index) => (
                     <div
                       key={item.id}
                       className="flex gap-4 pb-4 border-b border-charcoal/10 last:border-0 last:pb-0"
                     >
                       <img
-                        src={item.image}
-                        alt={item.title}
+                        src={booksImage[index]}
+                        alt={item.id}
                         className="w-16 h-24 object-cover rounded"
                       />
                       <div className="flex-grow">
                         <h3 className="font-display text-lg font-semibold text-charcoal">
-                          {item.title}
+                          {item?.book?.title}
                         </h3>
                         <p className="text-sm text-charcoal/60 font-sans italic mb-2">
-                          por {item.author}
+                          por {item?.book?.author}
                         </p>
                         <div className="flex items-center justify-between">
                           <p className="text-sm text-charcoal/60 font-sans">
                             Quantidade: {item.quantity}
                           </p>
                           <p className="font-display text-lg font-semibold text-burgundy">
-                            R$ {(item.price * item.quantity).toFixed(2)}
+                            R${" "}
+                            {Number(item.totalItemValue)
+                              .toFixed(2)
+                              .replace(".", ",")}
                           </p>
                         </div>
                       </div>
@@ -156,7 +199,7 @@ export default function OrdersPage() {
                       Total do Pedido
                     </span>
                     <span className="font-display text-2xl font-bold text-burgundy">
-                      R$ {order.total.toFixed(2)}
+                      R$ {Number(order.totalPrice).toFixed(2).replace(".", ",")}
                     </span>
                   </div>
                 </div>
@@ -165,7 +208,7 @@ export default function OrdersPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col items-center">
                       <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center ${order.status === "processing" || order.status === "shipped" || order.status === "delivered" ? "bg-sage" : "bg-charcoal/20"}`}
+                        className={`w-10 h-10 rounded-full flex items-center justify-center ${order.status === "inProcessing" || order.status === "shipped" || order.status === "delivered" ? "bg-sage" : "bg-charcoal/20"}`}
                       >
                         <svg
                           className="w-5 h-5 text-cream"
@@ -192,7 +235,7 @@ export default function OrdersPage() {
 
                     <div className="flex flex-col items-center">
                       <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center ${order.status === "shipped" || order.status === "delivered" ? "bg-sage" : "bg-charcoal/20"}`}
+                        className={`w-10 h-10 rounded-full flex items-center justify-center ${order.status === "inTransportation" || order.status === "delivered" ? "bg-sage" : "bg-charcoal/20"}`}
                       >
                         <svg
                           className="w-5 h-5 text-cream"
@@ -241,6 +284,19 @@ export default function OrdersPage() {
                     </div>
                   </div>
                 </div>
+                {order.status === "delivered" && (
+                  <div className=" p-6 mt-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <button
+                        type="button"
+                        className="btn-primary inline-block"
+                        onClick={() => mutateRequestExchange(order.id)}
+                      >
+                        Solicitar Troca
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           ))}

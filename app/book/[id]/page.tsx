@@ -2,24 +2,26 @@
 
 import { useStore } from "@/lib/store-context";
 import { useState, useEffect, useRef } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { booksImage } from "@/data/mockProducts";
 
 export default function BookDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { books, addToCart, cart } = useStore();
   const [isAdded, setIsAdded] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [visible, setVisible] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
 
-  const book = books.find((b) => b.id === Number(params.id));
+  const book = books.find((b) => b.id === params.id);
+  const index = parseInt(searchParams.get("index") || "0", 10);
   const inCart = cart.some((item) => item.id === book?.id);
   const related = books
     .filter((b) => b.category === book?.category && b.id !== book?.id)
     .slice(0, 3);
-
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 60);
@@ -55,11 +57,11 @@ export default function BookDetailPage() {
     );
   }
 
-  const stars = Array.from({ length: 5 }, (_, i) => {
-    const filled = i < Math.floor(book.rating);
-    const half = !filled && i < book.rating;
-    return { filled, half };
-  });
+  // const stars = Array.from({ length: 5 }, (_, i) => {
+  //   const filled = i < Math.floor(book.rating);
+  //   const half = !filled && i < book.rating;
+  //   return { filled, half };
+  // });
 
   return (
     <div className="min-h-screen bg-cream">
@@ -98,13 +100,12 @@ export default function BookDetailPage() {
               <div className="absolute inset-0 translate-x-2 translate-y-2 bg-charcoal/10" />
               <div className="absolute inset-0 translate-x-1 translate-y-1 bg-charcoal/6" />
 
-
               <div className="relative overflow-hidden shadow-2xl">
                 <div
                   className={`bg-charcoal/8 transition-opacity duration-500 ${imageLoaded ? "opacity-0" : "opacity-100"} absolute inset-0`}
                 />
                 <img
-                  src={book.image}
+                  src={booksImage[index || 0]}
                   alt={book.title}
                   className="w-full aspect-[2/3] object-cover"
                   onLoad={() => setImageLoaded(true)}
@@ -112,30 +113,15 @@ export default function BookDetailPage() {
                 <div className="absolute inset-y-0 left-0 w-3 bg-gradient-to-r from-charcoal/20 to-transparent pointer-events-none" />
               </div>
 
-
               <div className="absolute -top-3 -right-3 bg-burgundy text-cream font-sans text-[9px] uppercase tracking-[0.2em] px-3 py-1.5">
                 {book.category}
               </div>
             </div>
 
             <div className="flex items-center justify-center gap-2 mt-6">
-              <div className="flex items-center gap-0.5">
-                {stars.map((s, i) => (
-                  <svg
-                    key={i}
-                    className={`w-4 h-4 ${s.filled ? "text-gold fill-current" : "text-charcoal/15 fill-current"}`}
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                  </svg>
-                ))}
-              </div>
-              <span className="font-display text-lg font-semibold text-charcoal">
-                {book.rating}
-              </span>
-              <span className="font-body text-xs italic text-charcoal/35">
-                /5
-              </span>
+              <div className="flex items-center gap-0.5"></div>
+              <span className="font-display text-lg font-semibold text-charcoal"></span>
+              <span className="font-body text-xs italic text-charcoal/35"></span>
             </div>
           </div>
 
@@ -147,7 +133,6 @@ export default function BookDetailPage() {
               transition: "opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s",
             }}
           >
-
             <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-gold mb-3">
               {book.category}
             </p>
@@ -155,7 +140,6 @@ export default function BookDetailPage() {
             <h1 className="font-display text-4xl sm:text-5xl text-charcoal font-semibold leading-[1.1] mb-3">
               {book.title}
             </h1>
-
 
             <p className="font-body text-lg italic text-charcoal/50 mb-6">
               por{" "}
@@ -170,16 +154,14 @@ export default function BookDetailPage() {
               <div className="h-px flex-1 bg-charcoal/8" />
             </div>
 
-
             <p className="font-body text-base text-charcoal/65 leading-relaxed mb-8 max-w-2xl">
               {book.description}
             </p>
 
-
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10">
               {[
                 { label: "Categoria", value: book.category },
-                { label: "Avaliação", value: `${book.rating} / 5,0` },
+                // { label: "Avaliação", value: `${book.rating} / 5,0` },
                 { label: "Disponibilidade", value: "Em estoque" },
               ].map(({ label, value }) => (
                 <div key={label} className="border-l-2 border-gold/30 pl-3">
@@ -193,14 +175,13 @@ export default function BookDetailPage() {
               ))}
             </div>
 
-
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <div>
                 <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-charcoal/35 mb-1">
                   Preço
                 </p>
                 <p className="font-display text-4xl font-bold text-charcoal">
-                  R$ {book.price.toFixed(2).replace(".", ",")}
+                  R$ {Number(book.price).toFixed(2).replace(".", ",")}
                 </p>
               </div>
 
@@ -361,7 +342,7 @@ export default function BookDetailPage() {
               >
                 <div className="w-16 flex-shrink-0 overflow-hidden shadow-sm relative">
                   <img
-                    src={rel.image}
+                    src={booksImage[i]}
                     alt={rel.title}
                     className="w-full aspect-[2/3] object-cover group-hover:scale-105 transition-transform duration-500"
                   />
@@ -379,7 +360,7 @@ export default function BookDetailPage() {
                     {rel.author}
                   </p>
                   <p className="font-display text-base font-bold text-charcoal">
-                    R$ {rel.price.toFixed(2).replace(".", ",")}
+                    R$ {Number(book.price).toFixed(2).replace(".", ",")}
                   </p>
                 </div>
               </Link>

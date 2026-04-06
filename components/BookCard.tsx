@@ -1,6 +1,8 @@
 "use client";
 
+import { booksImage } from "@/data/mockProducts";
 import { useStore } from "@/lib/store-context";
+import { IBook } from "@/types/books.interface";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -16,10 +18,11 @@ interface Book {
 }
 
 interface BookCardProps {
-  book: Book;
+  book: IBook;
+  index: number;
 }
 
-export default function BookCard({ book }: BookCardProps) {
+export default function BookCard({ book, index }: BookCardProps) {
   const { addToCart } = useStore();
   const [isAdded, setIsAdded] = useState(false);
 
@@ -33,31 +36,28 @@ export default function BookCard({ book }: BookCardProps) {
   };
 
   return (
-    <Link href={`/book/${book.id}`} className="block group">
+    <Link href={`/book/${book.id}?index=${index}`} className="block group">
       <div className="group bg-white rounded-lg shadow-md overflow-hidden card-hover border border-charcoal/5">
         <div className="relative h-80 overflow-hidden bg-charcoal/5">
           <img
-            src={book.image}
+            src={booksImage[index]}
             alt={book.title}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
           />
-
 
           <div className="absolute top-3 right-3 bg-burgundy/90 backdrop-blur-sm text-cream px-3 py-1 rounded-full text-xs font-sans font-medium">
             {book.category}
           </div>
 
-
           <div className="absolute bottom-3 left-3 flex items-center space-x-1 bg-cream/90 backdrop-blur-sm px-2 py-1 rounded-full">
             <svg className="w-4 h-4 text-gold fill-current" viewBox="0 0 20 20">
               <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
             </svg>
-            <span className="text-xs font-sans font-semibold text-charcoal">
+            {/* <span className="text-xs font-sans font-semibold text-charcoal">
               {book.rating}
-            </span>
+            </span> */}
           </div>
         </div>
-
 
         <div className="p-5">
           <h3 className="font-display font-semibold text-lg text-charcoal mb-1 line-clamp-2 group-hover:text-burgundy transition-colors">
@@ -75,7 +75,7 @@ export default function BookCard({ book }: BookCardProps) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-2xl font-display font-bold text-burgundy">
-                R$ {book.price.toFixed(2)}
+                R$ {book.price}
               </p>
             </div>
 

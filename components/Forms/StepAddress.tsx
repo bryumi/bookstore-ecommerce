@@ -2,9 +2,9 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 import SectionTitle from "../SectionTitle";
 import AddressForm from "./AddressForm";
 import AddBtn from "../Buttons/AddBtn";
-import FieldError from "../FieldError";
-import { emptyAddress } from "@/utils/mask";
 import { UserData } from "@/types/mock.interface";
+import { emptyAddress } from "@/utils/mask";
+import FieldError from "../FieldError";
 
 const StepAddresses = () => {
   const {

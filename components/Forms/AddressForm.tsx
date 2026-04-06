@@ -1,4 +1,4 @@
-import { Address, UserData } from "@/types/mock.interface";
+import { UserData } from "@/types/mock.interface";
 import Input from "../Input";
 import Select from "../Select";
 import Toggle from "../Toogle";
@@ -102,11 +102,25 @@ const AddressForm = ({
           error={e.cep?.message}
         />
         <div className="col-span-2">
-          <Input
-            label="Tipo de Logradouro"
+          <Select
+            label="Tipo de logradouro"
             required
             registration={register(`${prefix}.tipoLogradouro`)}
             error={e.tipoLogradouro?.message}
+            options={[
+              { value: "Rua", label: "Rua" },
+              { value: "Avenida", label: "Avenida" },
+              { value: "Travessa", label: "Travessa" },
+              { value: "Viela", label: "Viela" },
+              { value: "Praca", label: "Praca" },
+              { value: "Largo", label: "Largo" },
+              { value: "Rodovia", label: "Rodovia" },
+              { value: "Alameda", label: "Alameda" },
+              { value: "Estrada", label: "Estrada" },
+              { value: "Quadra", label: "Quadra" },
+              { value: "Loteamento", label: "Loteamento" },
+              { value: "Setor", label: "Setor" },
+            ]}
           />
         </div>
       </div>

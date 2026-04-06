@@ -1,24 +1,29 @@
-'use client';
+"use client";
 
-import { useStore } from '@/lib/store-context';
-import BookCard from '@/components/BookCard';
-import { useState, useMemo } from 'react';
+import { useStore } from "@/lib/store-context";
+import BookCard from "@/components/BookCard";
+import { useState, useMemo } from "react";
 
 export default function HomePage() {
   const { books } = useStore();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('Todos');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("Todos");
 
   const categories = useMemo(() => {
-    const cats = ['Todos', ...Array.from(new Set(books.map(book => book.category)))];
+    const cats = [
+      "Todos",
+      ...Array.from(new Set(books.map((book) => book.category))),
+    ];
     return cats;
   }, [books]);
 
   const filteredBooks = useMemo(() => {
-    return books.filter(book => {
-      const matchesSearch = book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           book.author.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCategory = selectedCategory === 'Todos' || book.category === selectedCategory;
+    return books.filter((book) => {
+      const matchesSearch =
+        book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        book.author.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCategory =
+        selectedCategory === "Todos" || book.category === selectedCategory;
       return matchesSearch && matchesCategory;
     });
   }, [books, searchTerm, selectedCategory]);
@@ -30,7 +35,7 @@ export default function HomePage() {
           <div className="absolute top-10 left-10 w-64 h-64 bg-gold rounded-full blur-3xl"></div>
           <div className="absolute bottom-10 right-10 w-96 h-96 bg-sage rounded-full blur-3xl"></div>
         </div>
-        
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center animate-fade-in">
             <h1 className="font-display font-bold text-5xl md:text-7xl mb-6 leading-tight">
@@ -38,9 +43,10 @@ export default function HomePage() {
               <span className="block text-gold">Grande Leitura</span>
             </h1>
             <p className="font-sans text-lg md:text-xl text-cream/90 max-w-2xl mx-auto mb-8">
-              Uma coleção cuidadosamente selecionada dos melhores livros para transformar sua biblioteca pessoal
+              Uma coleção cuidadosamente selecionada dos melhores livros para
+              transformar sua biblioteca pessoal
             </p>
-            
+
             <div className="max-w-2xl mx-auto">
               <div className="relative">
                 <input
@@ -56,7 +62,12 @@ export default function HomePage() {
                   stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
                 </svg>
               </div>
             </div>
@@ -76,8 +87,8 @@ export default function HomePage() {
                 onClick={() => setSelectedCategory(category)}
                 className={`px-4 py-2 rounded-full font-sans font-medium whitespace-nowrap transition-all duration-300 ${
                   selectedCategory === category
-                    ? 'bg-burgundy text-cream shadow-md'
-                    : 'bg-charcoal/5 text-charcoal hover:bg-charcoal/10'
+                    ? "bg-burgundy text-cream shadow-md"
+                    : "bg-charcoal/5 text-charcoal hover:bg-charcoal/10"
                 }`}
               >
                 {category}
@@ -90,8 +101,18 @@ export default function HomePage() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {filteredBooks.length === 0 ? (
           <div className="text-center py-20">
-            <svg className="w-24 h-24 mx-auto text-charcoal/20 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            <svg
+              className="w-24 h-24 mx-auto text-charcoal/20 mb-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+              />
             </svg>
             <h3 className="font-display text-2xl text-charcoal/60 mb-2">
               Nenhum livro encontrado
@@ -104,10 +125,13 @@ export default function HomePage() {
           <>
             <div className="flex items-center justify-between mb-8">
               <h2 className="font-display text-3xl font-bold text-charcoal">
-                {selectedCategory === 'Todos' ? 'Todos os Livros' : selectedCategory}
+                {selectedCategory === "Todos"
+                  ? "Todos os Livros"
+                  : selectedCategory}
               </h2>
               <p className="font-sans text-charcoal/60">
-                {filteredBooks.length} {filteredBooks.length === 1 ? 'livro' : 'livros'}
+                {filteredBooks.length}{" "}
+                {filteredBooks.length === 1 ? "livro" : "livros"}
               </p>
             </div>
 
@@ -118,7 +142,7 @@ export default function HomePage() {
                   className="animate-slide-up"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
-                  <BookCard book={book} />
+                  <BookCard book={book} index={index} />
                 </div>
               ))}
             </div>
@@ -131,15 +155,27 @@ export default function HomePage() {
           <h2 className="font-display text-4xl font-bold text-center mb-12 text-gold">
             Por Que Escolher a Livraria Elegante?
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center p-6 rounded-lg bg-cream/5 backdrop-blur-sm">
               <div className="w-16 h-16 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                <svg
+                  className="w-8 h-8 text-gold"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                  />
                 </svg>
               </div>
-              <h3 className="font-display text-xl font-semibold mb-2">Seleção Curada</h3>
+              <h3 className="font-display text-xl font-semibold mb-2">
+                Seleção Curada
+              </h3>
               <p className="font-sans text-cream/80 text-sm">
                 Cada livro é cuidadosamente selecionado para garantir qualidade
               </p>
@@ -147,11 +183,23 @@ export default function HomePage() {
 
             <div className="text-center p-6 rounded-lg bg-cream/5 backdrop-blur-sm">
               <div className="w-16 h-16 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                <svg
+                  className="w-8 h-8 text-gold"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+                  />
                 </svg>
               </div>
-              <h3 className="font-display text-xl font-semibold mb-2">Entrega Rápida</h3>
+              <h3 className="font-display text-xl font-semibold mb-2">
+                Entrega Rápida
+              </h3>
               <p className="font-sans text-cream/80 text-sm">
                 Receba seus livros favoritos no conforto da sua casa
               </p>
@@ -159,11 +207,23 @@ export default function HomePage() {
 
             <div className="text-center p-6 rounded-lg bg-cream/5 backdrop-blur-sm">
               <div className="w-16 h-16 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg
+                  className="w-8 h-8 text-gold"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
               </div>
-              <h3 className="font-display text-xl font-semibold mb-2">Garantia de Qualidade</h3>
+              <h3 className="font-display text-xl font-semibold mb-2">
+                Garantia de Qualidade
+              </h3>
               <p className="font-sans text-cream/80 text-sm">
                 Todos os livros são novos e em perfeito estado
               </p>

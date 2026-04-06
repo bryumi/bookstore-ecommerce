@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useSnackbar } from "@/hooks/useSnackbar";
 import { useStore } from "@/lib/store-context";
 import { useGetClientData } from "@/services/clients/getClientData";
+import { useGetCoupons } from "@/services/clients/getCoupons";
 import { useUpdateClient } from "@/services/clients/updateClient";
 import { UserData } from "@/types/mock.interface";
 import { mapClientToUserData } from "@/utils/mappedClientToUser";
@@ -17,6 +18,7 @@ const ProfilePage = () => {
   const router = useRouter();
   const { user, logout } = useAuth();
   const { data: clientData, isLoading } = useGetClientData(user?.id ?? "");
+  const { data: coupons } = useGetCoupons(user?.id ?? "");
 
   const { showSnackbar } = useSnackbar();
   const queryClient = useQueryClient();

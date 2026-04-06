@@ -14,6 +14,7 @@ import { useSnackbar } from "@/hooks/useSnackbar";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useDeleteAccount } from "@/services/clients/deleteAccount";
+import { useGetCoupons } from "@/services/clients/getCoupons";
 
 const ProfileForm = ({
   loggedUser,
@@ -34,6 +35,7 @@ const ProfileForm = ({
 }) => {
   const [modalChangePassword, setModalChangePassword] = useState(false);
   const [modalDeleteAccount, setModalDeleteAccount] = useState(false);
+  const [modalCoupons, setModalCoupons] = useState(false);
   const methods = useForm<UserData>({
     resolver: yupResolver(registerSchema),
     defaultValues: loggedUser,
@@ -45,6 +47,7 @@ const ProfileForm = ({
   const router = useRouter();
   const { showSnackbar } = useSnackbar();
   const { user, logout } = useAuth();
+  const { data: coupons } = useGetCoupons(user?.id ?? "");
   const {
     handleSubmit,
     formState: { isSubmitting, errors },
@@ -176,6 +179,14 @@ const ProfileForm = ({
               >
                 Excluir conta
               </button>
+              {coupons?.cupons && coupons?.cupons.length > 0 && (
+                <button
+                  onClick={() => setModalCoupons(true)}
+                  className="font-sans text-[10px] uppercase tracking-[0.15em] bg-burgundy text-yellow-50 border border-charcoal/12 px-4 py-2 hover:border-burgundy/30  hover:bg-burgundy/80 transition-all duration-200 mb-1"
+                >
+                  Meus cupons
+                </button>
+              )}
             </div>
           </div>
 
@@ -261,6 +272,26 @@ const ProfileForm = ({
         open={modalChangePassword}
         onClose={() => setModalChangePassword(false)}
       />
+      <Modal
+        open={modalCoupons}
+        title="Meus Cupons"
+        onClose={() => setModalCoupons(false)}
+      >
+        <div className=" p-4  flex justify-between">
+          <span className="font-sans text-[14px] uppercase">Código</span>
+          <span className="font-sans text-[14px] uppercase">Valor</span>
+        </div>
+        {coupons?.cupons.map((coupon) => (
+          <div className="bg-white border border-charcoal/8 p-4  flex justify-between">
+            <span className="font-sans text-[14px] uppercase">
+              {coupon.cupomCode}
+            </span>
+            <span className="font-sans text-[14px] uppercase">
+              R$ {Number(coupon.cupomValue).toFixed(2).replace(".", ",")}
+            </span>
+          </div>
+        ))}
+      </Modal>
       <Modal
         open={modalDeleteAccount}
         title="Tem certeza que deseja excluir sua conta?"

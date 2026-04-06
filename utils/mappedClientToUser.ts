@@ -2,6 +2,7 @@ import { Address, Card, UserData } from "@/types/mock.interface";
 
 export function mapClientToUserData(apiClient: any): UserData {
   return {
+    id: apiClient.id,
     nome: apiClient.name,
     email: apiClient.email,
     senha: "123456Aa*",
@@ -36,7 +37,6 @@ function mapAddress(address: any): Address {
     isEntrega: address.isDeliveryAddress,
   };
 }
-
 
 function mapCard(card: any): Card {
   return {
