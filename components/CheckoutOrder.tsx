@@ -36,6 +36,16 @@ interface CardPayment {
   value: string;
 }
 
+interface PaymentPayload {
+  paymentMethod: "credit_card" | "cupom_exchange";
+  paymentValue: number;
+  paymentStatus: string;
+  creditCard?: {
+    id: string;
+  };
+  cupomCode?: string;
+}
+
 interface OrderSummaryProps {
   user?: UserData;
   onConfirm: (order: OrderPayload) => void;
@@ -98,7 +108,9 @@ export default function OrderSummary({
   const [error, setError] = useState<string | null>(null);
 
   const hasCoupons = userCoupons.find((c) => c.cupomCode === couponCode);
-  const total = getCartTotal() - (Number(hasCoupons?.cupomValue) ?? 0);
+  const total = hasCoupons
+    ? getCartTotal() - (Number(hasCoupons?.cupomValue) ?? 0)
+    : getCartTotal();
 
   const allocatedTotal = useMemo(
     () => cardPayments.reduce((sum, p) => sum + parseValue(p.value), 0),
@@ -179,6 +191,22 @@ export default function OrderSummary({
     }
     try {
       setIsSubmitting(true);
+      const payments: PaymentPayload[] = cardPayments.map((p) => ({
+        paymentMethod: "credit_card",
+        paymentValue: total === 0 ? getCartTotal() : parseValue(p.value),
+        paymentStatus: "approved",
+        creditCard: {
+          id: p.cardId,
+        },
+      }));
+      if (hasCoupons) {
+        payments.push({
+          paymentMethod: "cupom_exchange",
+          paymentValue: Number(hasCoupons.cupomValue),
+          paymentStatus: "approved",
+          cupomCode: hasCoupons.cupomCode,
+        });
+      }
       await api.post("/orders", {
         clientId: {
           id: user.id,
@@ -190,22 +218,14 @@ export default function OrderSummary({
           unitaryValue: item.price,
           totalItemValue: Number(item.price) * item.quantity,
         })),
-        payments: cardPayments.map((p) => ({
-          paymentMethod: "credit_card",
-          paymentValue: total === 0 ? getCartTotal() : parseValue(p.value),
-          paymentStatus: "approved",
-          creditCard: {
-            id: p.cardId,
-          },
-          cupomCode: couponCode,
-        })),
+        payments,
         deliveryId: {
           id: uuidv4(),
           freightValue: "0.00",
           freightType: "delivery",
         },
         orderDate: new Date().toISOString(),
-        totalPrice: total === 0 ? getCartTotal() : total,
+        totalPrice: getCartTotal(),
         freightValue: "0.00",
       });
       onConfirm({
@@ -280,7 +300,7 @@ export default function OrderSummary({
           <div className="px-6 pt-4 pb-6 space-y-2 border-t border-charcoal/5 mt-2">
             <div className="flex justify-between font-body text-lg text-charcoal/50">
               <span>Subtotal</span>
-              <span>R$ {Number(total).toFixed(2).replace(".", ",")}</span>
+              <span>R$ {getCartTotal().toFixed(2).replace(".", ",")}</span>
             </div>
             <div className="flex justify-between font-body text-lg text-charcoal/50">
               <span>Frete</span>

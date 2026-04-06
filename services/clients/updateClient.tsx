@@ -22,7 +22,7 @@ export const useUpdateClient = ({ onSuccess, onError }: Props) => {
         password: form.senha,
         confirmPassword: form.confirmarSenha,
         addresses: form.enderecos.map((address) => ({
-          id: address.idApi,
+          id: address.idApi !== "" ? address.idApi : undefined,
           typeResidence: address.tipo,
           addressNickname: address.apelido,
           typeStreet: address.tipoLogradouro,
@@ -38,7 +38,7 @@ export const useUpdateClient = ({ onSuccess, onError }: Props) => {
           isBillingAddress: address.isCobranca,
         })),
         creditCard: form.cartoes.map((card) => ({
-          id: card.idApi,
+          id: card.idApi !== "" ? card.idApi : undefined,
           cardNumber: card.numero,
           cardName: card.apelido,
           cardExpirationDate: card.validade,
