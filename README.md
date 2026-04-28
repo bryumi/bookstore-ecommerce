@@ -124,11 +124,8 @@ bookstore-ecommerce/
 - Integração com API de pagamento
 - Sistema de autenticação de usuários
 - Avaliações e comentários de livros
-- Wishlist/Lista de desejos
 - Recomendações personalizadas
-- Cupons de desconto
-- Sistema de newsletter
-- Integração com gateway de pagamento real
+- Cupons de desconto/troca
 
 ## 📝 Licença
 
