@@ -85,6 +85,13 @@ function AddAddressModal({
       return;
     }
 
+    onAdd({
+      id: generateId(),
+      idApi: "",
+      bairro: "",
+      tipoLogradouro: "",
+      ...form,
+    });
     setForm(emptyAddressForm());
     setErrors({});
     onClose();
