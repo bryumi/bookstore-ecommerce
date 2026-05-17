@@ -245,11 +245,7 @@ export default function OrderSummary({
 
   if (cart.length === 0) return null;
 
-  const deliveryAddresses = user?.enderecos?.filter((a) => a.isEntrega);
-  const allAddresses = user?.enderecos;
-  const addressList = deliveryAddresses?.length
-    ? deliveryAddresses
-    : allAddresses;
+  const addressList = user?.enderecos || [];
 
   return (
     <>
@@ -591,6 +587,7 @@ export default function OrderSummary({
                             R$
                           </span>
                           <input
+                            data-cy="payment-value"
                             type="text"
                             inputMode="decimal"
                             value={payment.value}

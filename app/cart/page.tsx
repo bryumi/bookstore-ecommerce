@@ -186,6 +186,7 @@ export default function CartPage() {
                   Cupom de troca (opcional)
                 </text>
                 <input
+                  data-cy="coupon-input"
                   type="text"
                   placeholder="Digite seu cupom de troca"
                   className="border border-charcoal rounded-sm w-1/3 mb-2 mt-2 p-2"
