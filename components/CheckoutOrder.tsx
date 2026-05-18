@@ -67,15 +67,14 @@ export default function OrderSummary({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { showSnackbar } = useSnackbar();
   const [selectedAddressId, setSelectedAddressId] = useState<string>(
-    // pre-select the first delivery address, or first address
-    user?.enderecos.find((a) => a.isEntrega)?.id ??
-      user?.enderecos[0]?.id ??
+    user?.enderecos?.find((a) => a.isEntrega)?.id ??
+      user?.enderecos?.[0]?.id ??
       "",
   );
 
   const [cardPayments, setCardPayments] = useState<CardPayment[]>(
     // pre-select preferential card if exists
-    user?.cartoes.some((c) => c.isPreferencial)
+    user?.cartoes?.some((c) => c.isPreferencial)
       ? [{ cardId: user.cartoes.find((c) => c.isPreferencial)!.id, value: "" }]
       : [],
   );
@@ -89,20 +88,76 @@ export default function OrderSummary({
     [onUserUpdate],
   );
 
-  const handleAddAddress = (address: Address) => {
+  const handleAddAddress = async (address: Address) => {
     if (!user) return;
-    const updated = { ...user, enderecos: [...user?.enderecos, address] };
-    persistUser(updated);
 
-    setSelectedAddressId(address.id);
+    try {
+      const payload = {
+        typeResidence: address.tipo,
+        addressNickname: address.apelido,
+        typeStreet: address.tipoLogradouro,
+        cep: address.cep,
+        street: address.rua,
+        neighborhood: address.bairro,
+        number: address.numero,
+        city: address.cidade,
+        state: address.estado,
+        country: address.pais,
+        obs: address.complemento,
+        isDeliveryAddress: address.isEntrega,
+        isBillingAddress: address.isCobranca,
+      };
+
+      await api.post(`/clients/${user.id}/address`, payload);
+
+      const updatedUser = {
+        ...user,
+        enderecos: [...(user.enderecos || []), address],
+      };
+
+      persistUser(updatedUser);
+
+      setSelectedAddressId(address.id);
+
+      showSnackbar("Endereço adicionado!", "success");
+    } catch (error) {
+      showSnackbar("Erro ao adicionar endereço", "error");
+    }
   };
 
-  const handleAddCard = (card: Card) => {
+  const handleAddCard = async (card: Card) => {
     if (!user) return;
-    const updated = { ...user, cartoes: [...user.cartoes, card] };
-    persistUser(updated);
 
-    setCardPayments((prev) => [...prev, { cardId: card.id, value: "" }]);
+    try {
+      await api.post(`/clients/${user.id}/creditCard`, {
+        cardNumber: card.numero,
+        cardName: card.apelido,
+        cardExpirationDate: card.validade,
+        cardHolderName: card.nomeImpresso,
+        cardFlag: card.bandeira,
+        securityCode: card.cvv,
+        isMainCard: card.isPreferencial,
+      });
+
+      const updatedUser = {
+        ...user,
+        cartoes: [...(user.cartoes || []), card],
+      };
+
+      persistUser(updatedUser);
+
+      setCardPayments((prev) => [
+        ...prev,
+        {
+          cardId: card.id,
+          value: "",
+        },
+      ]);
+
+      showSnackbar("Cartão adicionado!", "success");
+    } catch (error) {
+      showSnackbar("Erro ao adicionar cartão", "error");
+    }
   };
 
   const [error, setError] = useState<string | null>(null);
@@ -470,7 +525,7 @@ export default function OrderSummary({
                 Seus cartões
               </p>
               <div className="flex flex-wrap gap-2">
-                {user?.cartoes.map((card) => {
+                {user?.cartoes?.map((card) => {
                   const alreadyAdded = selectedCardIds.includes(card.id);
                   return (
                     <button

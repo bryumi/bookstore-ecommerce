@@ -176,6 +176,7 @@ function AddAddressModal({
               required
               onChange={(v) => set("rua", v)}
               error={errors.rua}
+              data-cy="address-street"
             />
           </div>
         </div>
@@ -187,6 +188,7 @@ function AddAddressModal({
             required
             onChange={(v) => set("numero", v)}
             error={errors.numero}
+            data-cy="address-number"
           />
           <div className="col-span-2">
             <ModalInput
@@ -205,6 +207,7 @@ function AddAddressModal({
             required
             onChange={(v) => set("estado", v.toUpperCase().substring(0, 2))}
             error={errors.estado}
+            data-cy="address-state"
           />
           <ModalInput
             label="Cidade"
@@ -212,6 +215,7 @@ function AddAddressModal({
             required
             onChange={(v) => set("cidade", v)}
             error={errors.cidade}
+            data-cy="address-city"
           />
           <ModalInput
             label="País"
@@ -219,6 +223,7 @@ function AddAddressModal({
             required
             onChange={(v) => set("pais", v)}
             error={errors.pais}
+            data-cy="address-country"
           />
         </div>
 

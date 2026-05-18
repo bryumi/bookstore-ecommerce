@@ -7,6 +7,7 @@ const ModalInput = ({
   error,
   required = false,
   hint = "",
+  ...rest
 }: {
   label: string;
   value?: string;
@@ -16,6 +17,7 @@ const ModalInput = ({
   error?: string;
   required?: boolean;
   hint?: string;
+  [key: string]: any;
 }) => (
   <div className="flex flex-col gap-1.5">
     <label className="font-sans text-[10px] uppercase tracking-[0.18em] font-semibold text-charcoal/50">
@@ -30,6 +32,7 @@ const ModalInput = ({
       className={`w-full border bg-cream px-3 py-2.5 font-body text-sm text-charcoal
         placeholder:text-charcoal/25 focus:outline-none focus:bg-white transition-all duration-200
         ${error ? "border-burgundy" : "border-charcoal/15 focus:border-burgundy"}`}
+      {...rest}
     />
     {error ? (
       <span className="font-sans text-[10px] text-burgundy">{error}</span>

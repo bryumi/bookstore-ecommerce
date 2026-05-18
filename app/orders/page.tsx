@@ -62,6 +62,8 @@ export default function OrdersPage() {
         return "bg-white-500/20 text-white-600 border-white-500";
       case "exchangeApproved":
         return "bg-green-500/20 text-green-500 border-green-500";
+      case "exchangeFailed":
+        return "bg-red-500/20 text-red-500 border-red-500";
       case "exchanged":
         return "bg-sage/20 text-sage border-sage";
       default:
@@ -83,6 +85,8 @@ export default function OrdersPage() {
         return "Em Troca";
       case "exchangeApproved":
         return "Troca Aprovada";
+      case "exchangeFailed":
+        return "Troca Recusada";
       case "exchanged":
         return "Troca Concluida";
       case "delivered":
