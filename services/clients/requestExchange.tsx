@@ -1,15 +1,35 @@
 import { useMutation } from "@tanstack/react-query";
 import api from "../api/api";
+
 interface Props {
   onSuccess?: () => void;
   onError?: (error: any) => void;
 }
-export const useRequestExchange = ({ onSuccess, onError }: Props) => {
+
+interface RequestExchangeDTO {
+  orderId: string;
+  orderItemIds: string[];
+}
+
+export const useRequestExchange = ({
+  onSuccess,
+  onError,
+}: Props) => {
   return useMutation({
     mutationKey: ["request-exchange-order"],
-    mutationFn: async (documentId: string) => {
-      await api.patch(`/orders/${documentId}/requestExchange`);
+
+    mutationFn: async ({
+      orderId,
+      orderItemIds,
+    }: RequestExchangeDTO) => {
+      await api.patch(
+        `/orders/${orderId}/requestExchange`,
+        {
+          orderItemIds,
+        },
+      );
     },
+
     onSuccess,
     onError,
   });

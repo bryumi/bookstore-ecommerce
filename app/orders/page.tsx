@@ -8,11 +8,16 @@ import { useGetOrdersClient } from "@/services/clients/getOrdersClient";
 import { useRequestExchange } from "@/services/clients/requestExchange";
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
+import { useState } from "react";
+import { string } from "yup";
 
 export default function OrdersPage() {
   const { user } = useAuth();
   const { data } = useGetOrdersClient(user.id);
   const { books } = useStore();
+  const [selectedItems, setSelectedItems] = useState<Record<string, string[]>>(
+    {},
+  );
 
   const { showSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
@@ -26,6 +31,21 @@ export default function OrdersPage() {
       showSnackbar((error as any).response.data.error as string, "error");
     },
   });
+
+  const toggleItemSelection = (orderId: string, itemId: string) => {
+    setSelectedItems((prev) => {
+      const current = prev[orderId] || [];
+
+      const exists = current.includes(itemId);
+
+      return {
+        ...prev,
+        [orderId]: exists
+          ? current.filter((id) => id !== itemId)
+          : [...current, itemId],
+      };
+    });
+  };
   const getStatusColor = (status: string) => {
     switch (status) {
       case "inProcessing":
@@ -163,8 +183,21 @@ export default function OrdersPage() {
                   {order.orderItems.map((item, index) => (
                     <div
                       key={item.id}
-                      className="flex gap-4 pb-4 border-b border-charcoal/10 last:border-0 last:pb-0"
+                      className="flex gap-4 pb-4 border-b border-charcoal/10"
                     >
+                      {order.status === "delivered" && (
+                        <input
+                          type="checkbox"
+                          checked={
+                            selectedItems[order.id]?.includes(item.id) || false
+                          }
+                          onChange={() =>
+                            toggleItemSelection(order.id, item.id)
+                          }
+                          className="mt-6 h-5 w-5"
+                        />
+                      )}
+
                       <img
                         src={booksImage[index]}
                         alt={item.id}
@@ -290,7 +323,23 @@ export default function OrdersPage() {
                       <button
                         type="button"
                         className="btn-primary inline-block"
-                        onClick={() => mutateRequestExchange(order.id)}
+                        onClick={() => {
+                          const selected = selectedItems[order.id] || [];
+
+                          if (selected.length === 0) {
+                            showSnackbar(
+                              "Selecione ao menos um item para troca",
+                              "error",
+                            );
+                            return;
+                          }
+
+                          mutateRequestExchange({
+                            orderId: order.id,
+                            orderItemIds: selected,
+                          });
+                        }}
+                        data-cy={`request-exchange-${order.id}`}
                       >
                         Solicitar Troca
                       </button>
