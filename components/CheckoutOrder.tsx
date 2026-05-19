@@ -163,9 +163,21 @@ export default function OrderSummary({
   const [error, setError] = useState<string | null>(null);
 
   const hasCoupons = userCoupons.find((c) => c.cupomCode === couponCode);
-  const total = hasCoupons
-    ? getCartTotal() - (Number(hasCoupons?.cupomValue) ?? 0)
-    : getCartTotal();
+  const subtotal = getCartTotal();
+
+  const discount = Number(hasCoupons?.cupomValue ?? 0);
+
+  const freight = useMemo(() => {
+    const subtotal = getCartTotal();
+
+    if (subtotal < 60) return 20;
+    if (subtotal < 100) return 10;
+    if (subtotal < 150) return 5;
+
+    return 0;
+  }, [getCartTotal()]);
+
+  const total = subtotal - discount + freight;
 
   const allocatedTotal = useMemo(
     () => cardPayments.reduce((sum, p) => sum + parseValue(p.value), 0),
@@ -276,12 +288,12 @@ export default function OrderSummary({
         payments,
         deliveryId: {
           id: uuidv4(),
-          freightValue: "0.00",
+          freightValue: freight.toString(),
           freightType: "delivery",
         },
         orderDate: new Date().toISOString(),
-        totalPrice: getCartTotal(),
-        freightValue: "0.00",
+        totalPrice: total,
+        freightValue: freight.toString(),
       });
       onConfirm({
         enderecoId: selectedAddressId,
@@ -355,7 +367,13 @@ export default function OrderSummary({
             </div>
             <div className="flex justify-between font-body text-lg text-charcoal/50">
               <span>Frete</span>
-              <span className="text-sage font-medium">Grátis</span>
+              <span
+                className={
+                  freight === 0 ? "text-sage font-medium" : "text-charcoal"
+                }
+              >
+                {freight === 0 ? "Grátis" : formatBRL(freight)}
+              </span>
             </div>
             {hasCoupons && (
               <div className="flex justify-between font-body text-lg text-charcoal/50">
