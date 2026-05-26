@@ -5,6 +5,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Providers from "@/components/Providers/Providers";
 
+import RecommendationChat from "@/components/Chat/RecommendationChat";
+
 export const metadata: Metadata = {
   title: "Booklovers - Sua Biblioteca Pessoal",
   description: "Encontre os melhores livros para sua coleção",
@@ -24,6 +26,7 @@ export default function RootLayout({
               <Header />
               <main className="flex-grow">{children}</main>
               <Footer />
+              <RecommendationChat />
             </div>
           </StoreProvider>
         </Providers>
