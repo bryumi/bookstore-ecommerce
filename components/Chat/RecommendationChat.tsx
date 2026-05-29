@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { localStorageKeys } from "@/utils/localStorageKeys";
 
 interface Message {
   role: "user" | "bot";
@@ -9,39 +10,29 @@ interface Message {
 }
 
 export default function RecommendationChat() {
+  const { isAuthenticated } = useAuth();
 
-  const { isAuthenticated } =
-    useAuth();
+  const [open, setOpen] = useState(false);
 
-  const [open, setOpen] =
-    useState(false);
+  const [input, setInput] = useState("");
 
-  const [input, setInput] =
-    useState("");
+  const [loading, setLoading] = useState(false);
 
-  const [loading, setLoading] =
-    useState(false);
-
-  const [messages, setMessages] =
-    useState<Message[]>([
-      {
-        role: "bot",
-        text:
-          "Olá! Posso recomendar livros 📚",
-      },
-    ]);
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      role: "bot",
+      text: "Olá! Posso recomendar livros 📚",
+    },
+  ]);
 
   if (!isAuthenticated) {
     return null;
   }
 
   async function sendMessage() {
+    if (!input.trim()) return;
 
-    if (!input.trim())
-      return;
-
-    const userMessage =
-      input;
+    const userMessage = input;
 
     setMessages((prev) => [
       ...prev,
@@ -55,54 +46,40 @@ export default function RecommendationChat() {
     setLoading(true);
 
     try {
+      const token = localStorage.getItem(localStorageKeys.accessToken);
+      console.log("TOKEN:", token);
 
-      const token =
-        localStorage.getItem(
-          "accessToken"
-        );
+      const response = await fetch(
+        "http://localhost:3000/api/chat/recommendation",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            message: userMessage,
+          }),
+        },
+      );
 
-      const response =
-        await fetch(
-          "http://localhost:3000/api/chat/recommendation",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type":
-                "application/json",
-              Authorization:
-                `Bearer ${token}`,
-            },
-            body:
-              JSON.stringify({
-                message:
-                  userMessage,
-              }),
-          }
-        );
-
-      const data =
-        await response.json();
+      const data = await response.json();
 
       setMessages((prev) => [
         ...prev,
         {
           role: "bot",
-          text:
-            data.response,
+          text: data.response,
         },
       ]);
-
     } catch {
-
       setMessages((prev) => [
         ...prev,
         {
           role: "bot",
-          text:
-            "Erro ao buscar recomendação.",
+          text: "Erro ao buscar recomendação.",
         },
       ]);
-
     } finally {
       setLoading(false);
     }
@@ -111,9 +88,7 @@ export default function RecommendationChat() {
   return (
     <>
       <button
-        onClick={() =>
-          setOpen(!open)
-        }
+        onClick={() => setOpen(!open)}
         className="
           fixed
           bottom-6
@@ -166,36 +141,25 @@ export default function RecommendationChat() {
               space-y-3
             "
           >
-            {messages.map(
-              (message, i) => (
-                <div
-                  key={i}
-                  className={
-                    message.role
-                    === "user"
-                      ? "text-right"
-                      : "text-left"
-                  }
-                >
-                  <span
-                    className="
+            {messages.map((message, i) => (
+              <div
+                key={i}
+                className={message.role === "user" ? "text-right" : "text-left"}
+              >
+                <span
+                  className="
                       inline-block
                       bg-gray-100
                       p-2
                       rounded-lg
                     "
-                  >
-                    {message.text}
-                  </span>
-                </div>
-              )
-            )}
+                >
+                  {message.text}
+                </span>
+              </div>
+            ))}
 
-            {loading && (
-              <p>
-                Pensando...
-              </p>
-            )}
+            {loading && <p>Pensando...</p>}
           </div>
 
           <div
@@ -208,11 +172,7 @@ export default function RecommendationChat() {
           >
             <input
               value={input}
-              onChange={(e) =>
-                setInput(
-                  e.target.value
-                )
-              }
+              onChange={(e) => setInput(e.target.value)}
               placeholder="
               Ex: quero suspense
               "
@@ -226,9 +186,7 @@ export default function RecommendationChat() {
             />
 
             <button
-              onClick={
-                sendMessage
-              }
+              onClick={sendMessage}
               className="
                 bg-pink-600
                 text-white
